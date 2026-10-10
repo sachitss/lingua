@@ -8,6 +8,10 @@ Date: 10 Oct 2026 · Commit `b37dd49` · GitHub Actions run 38085331124 (all job
 | Browser tests (`npm run e2e`): 17 scenarios on 2 devices | Playwright 1.56, Desktop Chrome and Pixel 7 emulation | Passed 34 of 34 |
 | Android launch test | Android 14 emulator (API 34, x86_64) | Passed: installs, starts, no crash, no JavaScript errors |
 | iOS launch test | iPhone simulator, Xcode 26.3 | Passed: installs, starts, process alive |
+| Windows desktop launch test | Windows (GitHub runner), Electron 44 | Passed: opens Lingua, brand, 6 tabs, powered-by footer, no errors |
+| macOS desktop launch test | macOS 15 (GitHub runner), Electron 44 | Passed: same checks |
+| Windows installer | NSIS `setup.exe` | Built; contains Lingua.exe and the full app (checked) |
+| macOS installers | dmg for Apple silicon and Intel | Built |
 | Android build | Gradle `assembleRelease`, `bundleRelease` | Passed |
 | iOS build | `xcodebuild archive` (device) and simulator build | Passed |
 | APK signature | `apksigner verify` and the independent `apksigtool verify` | v2 and v3 verified; certificate SHA-256 `8d95a5d4…d3d1af` |
@@ -56,5 +60,6 @@ Date: 10 Oct 2026 · Commit `b37dd49` · GitHub Actions run 38085331124 (all job
 ### Not covered yet
 - Native-speaker review of Italian and French.
 - Physical devices.
+- Code signing for Windows and macOS (installers are unsigned).
 - Screen-reader pass.
 - Store review.

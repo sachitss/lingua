@@ -4,5 +4,5 @@ Each folder holds one Lingua release: its packaged files, release notes and, fro
 
 | Version | Date | Contents |
 | --- | --- | --- |
-| [v0.2.0](v0.2.0/RELEASE_NOTES.md) | 10 Oct 2026 | First app build: Android (signed APK and AAB), iOS (unsigned), web; six languages |
+| [v0.2.0](v0.2.0/RELEASE_NOTES.md) | 10 Oct 2026 | First app build: Android (signed APK and AAB), iOS (unsigned), Windows and Mac installers, web; six languages |
 | [v0.1.0](v0.1.0/RELEASE_NOTES.md) | 10 Oct 2026 | Specification and brand package; no app build yet |

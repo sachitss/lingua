@@ -1,4 +1,9 @@
-# Files copied from the CI pre-release build-0.2.0 (commit b37dd49, run 38085331124) when this release is published.
+# Files copied from the CI pre-release build-0.2.0 when this release is published.
 lingua-0.2.0-ios-unsigned.ipa
 lingua-0.2.0-ios-simulator.zip
 lingua-0.2.0-web.zip
+lingua-0.2.0-windows-setup.exe
+lingua-0.2.0-mac-arm64.dmg
+lingua-0.2.0-mac-x64.dmg
+lingua-0.2.0-install-package.zip
+SHA256SUMS.txt
