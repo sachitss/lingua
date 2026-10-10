@@ -1,0 +1,5 @@
+de04f8776a46d71ec11fdb1ced0976ca819263659d55a48bbf1967f5ce0280fc  lingua-0.2.0-android.apk
+4e14529b29fd451fb9de619a092a53aa8c892460e15f12a5556db83cd3e958b2  lingua-0.2.0-android.aab
+91837fbeea40bbcf678571acd7364c128440153437a617b8dfd7b345acd5c30d  lingua-0.2.0-ios-unsigned.ipa
+4505e875ef9d43dabc3d09a3fbd10b631ad5553241ded4d59419dd540cfb5aef  lingua-0.2.0-ios-simulator.zip
+153957de439e3c8c7a088b843bcb62239ffeb4be8985778d6e4cfdcc8b1697d0  lingua-0.2.0-web.zip

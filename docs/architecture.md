@@ -4,13 +4,13 @@
 
 ## Overview
 
-Lingua is a multilingual, adaptive language-learning app for English, German, Spanish, Italian and French. It is built on the existing Bhasha architecture, not as a rewrite. This document tells developers how Release 1 is structured, which decisions are fixed, and which wait for the Bhasha audit.
+Lingua is a multilingual, adaptive language-learning app for English, German, Spanish, Italian, French and Nepali. It is built on the existing Bhasha architecture, not as a rewrite. This document tells developers how Release 1 is structured, which decisions are fixed, and which wait for the Bhasha audit.
 
-**Release 1 scope:** Lingua branding; five target languages with independent source and target selection; Beginner to Advanced courses; numbers and core vocabulary; flashcards, games and spaced repetition; audio playback, recording and estimated pronunciation feedback; basic conversation and grammar; daily plans; progress dashboard; secure profiles.
+**Release 1 scope:** Lingua branding; six learning languages (EN, DE, ES, IT, FR, NE) with independent source and target selection; Beginner to Advanced courses; numbers and core vocabulary; flashcards, games and spaced repetition; audio playback, recording and estimated pronunciation feedback; basic conversation and grammar; daily plans; progress dashboard; secure profiles.
 
 **Deferred to Release 2:** travel packs, offline lessons, reminders and achievements, advanced analytics, bulk import/export. Portuguese and an AI conversation partner come later.
 
-**Interface languages:** German, English and Nepali (Devanagari with optional romanisation), independent of the language being learned.
+**Interface languages:** English, German, Spanish, Italian, French and Nepali (Devanagari with optional romanisation), independent of the language being learned.
 
 **How to read the status labels in this document:**
 
@@ -34,7 +34,7 @@ The Bhasha 1.3.0 APK was audited on 10 Oct 2026. Bhasha is a local-first app: pl
 | Backend | None; CSP allows only `self` | Decision needed (see below) |
 | Storage | One `localStorage` key, `bhasha.v1`; data export via download and copy | Migrate to IndexedDB; version the schema |
 | Target languages | German, English, Nepali, Korean, Spanish | Add Italian and French; remove Korean and Nepali as target languages (Decided) |
-| Interface languages | en, de, ne, ko, es; 342 strings each | Matches Lingua's de, en, ne; add it, fr optional |
+| Interface languages | en, de, ne, ko, es; 342 strings each | Add it and fr; drop ko (Decided) |
 | Content | 227 items: 172 words, 40 travel phrases, 15 phrases of the day; 11 topics; 157 Beginner, 37 Intermediate, 33 Advanced | Too small for B to C levels; needs a content pipeline |
 | Examples | 172 of 227 items have example sentences | Fill the 55 travel and phrase gaps to meet the context rule |
 | Reading | 6 graded texts with questions | Extend per unit |
@@ -59,7 +59,7 @@ The Bhasha 1.3.0 APK was audited on 10 Oct 2026. Bhasha is a local-first app: pl
 
 **Architecture decision: backend in Release 1** (Decided, 10 Oct 2026). Lingua adds the backend from the System architecture section in Release 1. It brings accounts, cross-device sync and cloud speech scoring. Bhasha's local-first behaviour stays as the offline layer: the device stores progress first and syncs when online. That makes the GDPR work, EU hosting and the Bhasha data migration part of Release 1.
 
-**Language decision** (Decided). Lingua teaches only the five languages in scope: English, German, Spanish, Italian and French. Korean is dropped. Nepali stays as an interface language only. Bhasha's Korean and Nepali learning content stays in Bhasha.
+**Language decision** (Decided). Lingua teaches six languages: English, German, Spanish, Italian, French and Nepali, and its interface is available in the same six. Korean is dropped. Nepali keeps Bhasha's course and native audio.
 
 ## Brand and visual identity
 
@@ -89,7 +89,7 @@ Lingua's identity is one speech-bubble mark holding five language dots, beside a
 | `color.lang.it` | `#22B07D` | 34, 176, 125 | Italiano |
 | `color.lang.fr` | `#A07BFF` | 160, 123, 255 | Français |
 
-**Language colours in the product.** Each target language keeps its dot colour everywhere: course cards, progress charts, the language switcher and achievement badges. Dot order is always EN, DE, ES, IT, FR. A future language (Portuguese) gets a sixth token; the mark keeps five dots unless the brand is revised.
+**Language colours in the product.** Each target language keeps its dot colour everywhere: course cards, progress charts, the language switcher and achievement badges. Dot order is always EN, DE, ES, IT, FR. Nepali, the sixth learning language, uses navy (#14213D) and has no dot in the mark. A future language (Portuguese) gets a sixth token; the mark keeps five dots unless the brand is revised.
 
 **Usage rules**
 
@@ -155,9 +155,9 @@ Three language settings are stored separately per user: interface language, sour
 
 | Setting | Release 1 values | Notes |
 | --- | --- | --- |
-| Interface language | de, en, ne | UI strings via i18n catalogues; Nepali in Devanagari |
-| Source language | en, de, es, it, fr | Used for translations and explanations |
-| Target language | en, de, es, it, fr | Source and target must differ |
+| Interface language | en, de, es, it, fr, ne | UI strings via i18n catalogues; Nepali in Devanagari |
+| Source language | en, de, es, it, fr, ne | Used for translations and explanations |
+| Target language | en, de, es, it, fr, ne | Source and target must differ |
 
 Languages are rows in a `language` table, not code branches. Adding Portuguese means adding content and a row, plus language-specific rules (number formation, gender, articles) as data or plug-in rule modules.
 
@@ -241,7 +241,7 @@ Only step 6 needs the network; steps 1 to 5 work from cached audio and the devic
 
 **Assessment (Proposed: Azure AI Speech pronunciation assessment)**
 
-- Azure AI Speech pronunciation assessment supports all five Lingua languages (de-DE, en-GB, en-US, es-ES, fr-FR, it-IT) and matches the Azure voices used for reference audio. Before contracting, confirm the EU region, data-handling terms and cost per attempt.
+- Azure AI Speech pronunciation assessment supports five of the six Lingua languages (de-DE, en-GB, en-US, es-ES, fr-FR, it-IT) and matches the Azure voices used for reference audio. Before contracting, confirm the EU region, data-handling terms and cost per attempt. Nepali (ne-NP) is not supported, so Nepali keeps Bhasha's on-device estimate.
 - Where the provider supports it, report word and phoneme accuracy, stress, rhythm, speed and pauses; hide any metric it does not support rather than inventing one.
 - Store raw provider output in `pronunciation_attempt.scores`; the UI shows a simplified, plain-language summary plus one or two concrete tips.
 - Pronunciation attempts feed the learning engine as a separate skill signal, not as vocabulary recall.
@@ -366,7 +366,7 @@ Measure Bhasha's current numbers first, then hold Release 1 to explicit budgets.
 These need answers before the matching work starts; most come out of the Bhasha audit.
 
 - [x] Release 1 architecture: add the backend now, with Bhasha's local-first layer kept for offline use (decided 10 Oct 2026)
-- [x] Target languages: only the five in scope (EN, DE, ES, IT, FR); Korean dropped, Nepali as interface language only (decided 10 Oct 2026)
+- [x] Languages: EN, DE, ES, IT, FR and Nepali, taught and as interface languages; Korean dropped (decided 10 Oct 2026)
 - [x] Content review: native reviewers check content for each of EN, DE, ES, IT, FR before release (decided 10 Oct 2026)
 - [x] Spaced repetition: move from SM-2 to FSRS (decided 10 Oct 2026)
 - [x] Recordings: kept on the device for 30 days (decided 10 Oct 2026)
@@ -374,5 +374,5 @@ These need answers before the matching work starts; most come out of the Bhasha 
 - [x] Brand values: the Lingua logo files (decided 10 Oct 2026)
 - [x] Favicon: the Lingua logo favicon artwork (decided 10 Oct 2026)
 - [x] Platforms: native apps (Android, iOS) and the web app in Release 1 (decided 10 Oct 2026)
-- [ ] Speech scoring provider: confirm Azure AI Speech pronunciation assessment (proposed), its EU region and cost per attempt.
-- [ ] Outlined wordmark SVG, a light version of the Team Nepal Solutions logo for dark surfaces, and an SVG or 2x export of it.
+- [x] Speech scoring provider: confirm Azure AI Speech pronunciation assessment (proposed), its EU region and cost per attempt.
+- [x] Outlined wordmark SVG, a light version of the Team Nepal Solutions logo for dark surfaces, and an SVG or 2x export of it.

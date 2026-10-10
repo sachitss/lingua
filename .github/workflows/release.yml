@@ -23,7 +23,15 @@ jobs:
             tag=$(basename "$dir"); notes="$dir/RELEASE_NOTES.md"
             [ -f "$notes" ] || continue
             title=$(head -1 "$notes" | sed 's/^# *//')
-            files=$(find "$dir" -maxdepth 1 -type f ! -name RELEASE_NOTES.md | sort)
+            files=$(find "$dir" -maxdepth 1 -type f ! -name RELEASE_NOTES.md ! -name FROM_BUILD | sort)
+            # Builds that stay out of git (iOS, web) are copied from the CI pre-release build-<version>.
+            if [ -f "$dir/FROM_BUILD" ]; then
+              mkdir -p "fetched/$tag"
+              for f in $(grep -v '^#' "$dir/FROM_BUILD"); do
+                gh release download "build-${tag#v}" -p "$f" -D "fetched/$tag" --clobber
+              done
+              files="$files $(find "fetched/$tag" -type f | sort)"
+            fi
             pre=""; case "$tag" in v0.*) pre="--prerelease";; esac
             if gh release view "$tag" >/dev/null 2>&1; then
               gh release edit "$tag" --title "$title" --notes-file "$notes"
