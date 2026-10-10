@@ -2,14 +2,16 @@
 
 # Lingua
 
-Lingua is a multilingual, adaptive language-learning app for **English, German, Spanish, Italian and French**. It is built on the existing Bhasha app (version 1.3.0), not written from scratch. It ships as an Android app, an iOS app and a web app (PWA) from one shared codebase.
+Lingua is a multilingual, adaptive language-learning app for **English, German, Spanish, Italian, French and Nepali**. It is built on the existing Bhasha app (version 1.3.0), not written from scratch. It ships as an Android app, an iOS app and a web app (PWA) from one shared codebase.
 
-> **Status: specification and brand (v0.1.0).** This repository holds the developer architecture, the Bhasha 1.3.0 audit and the brand asset package. There is no application code or app build yet.
+> **Status: v0.2.0 preview.** The app in [`app/`](app) runs on the web, Android and iOS. Italian and French content and the Italian and French interface are drafts awaiting review by native speakers. Accounts and sync (the backend) are not built yet; progress stays on the device.
 
 ## Contents
 
 | Path | What it is |
 | --- | --- |
+| [`app/`](app) | The Lingua app: web code, Android and iOS projects, tests ([how to build](app/README.md)) |
+| [`.github/workflows/`](.github/workflows) | Test and build on every push; publish `releases/` as GitHub Releases |
 | [`docs/architecture.md`](docs/architecture.md) | Developer architecture: Bhasha audit, brand, system architecture, content model, learning engine, audio, data model, APIs, privacy, testing, open questions |
 | [`docs/lingua-architecture.pdf`](docs/lingua-architecture.pdf) | The same document as an A4 PDF |
 | [`docs/vocabulary-principles.md`](docs/vocabulary-principles.md) | The four vocabulary principles the learning engine enforces |
@@ -24,14 +26,14 @@ Lingua is a multilingual, adaptive language-learning app for **English, German, 
 
 | Topic | Decision |
 | --- | --- |
-| Languages taught | EN, DE, ES, IT, FR only; Nepali stays as an interface language |
-| Interface languages | German, English, Nepali |
+| Languages taught | English, German, Spanish, Italian, French and Nepali |
+| Interface languages | English, German, Spanish, Italian, French and Nepali |
 | Platforms | Android and iOS (Capacitor) plus the web app (PWA), one codebase |
 | Backend | Added in Release 1 for accounts, sync and cloud speech scoring; the app still works offline |
 | Spaced repetition | FSRS, replacing Bhasha's SM-2 variant; existing history is replayed on migration |
 | Reference audio | Azure neural text-to-speech |
 | Recordings | Kept on the device only, deleted after 30 days |
-| Speech scoring | Azure AI Speech pronunciation assessment (proposed, to be confirmed) |
+| Speech scoring | Azure AI Speech pronunciation assessment; Nepali uses the on-device estimate |
 | Content review | Native reviewers for each of the five languages |
 
 The full list, including what is still open, is in [Open questions](docs/architecture.md#open-questions).

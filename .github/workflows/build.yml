@@ -100,6 +100,10 @@ jobs:
         run: |
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
             -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/sim" build | tail -20
+      - name: Launch test on an iPhone simulator
+        run: |
+          bash tools/ios-smoke.sh "$RUNNER_TEMP/sim/Build/Products/Release-iphonesimulator/App.app"
+          mkdir -p ../dist && cp smoke/*.png ../dist/
       - name: Package
         run: |
           V=$(node -p "require('./package.json').version"); mkdir -p ../dist "$RUNNER_TEMP/ipa/Payload"
@@ -110,17 +114,49 @@ jobs:
       - uses: actions/upload-artifact@v4
         with: { name: ios, path: dist/ }
 
+  android-device:
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/package-lock.json }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "21" }
+      - run: cd app && npm ci && npx cap sync android
+      - name: Build a debug APK for the emulator
+        working-directory: app/android
+        run: ./gradlew --no-daemon assembleDebug
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Launch test on an Android 14 emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: bash app/tools/android-smoke.sh
+      - run: mkdir -p dist && cp smoke/*.png dist/ && cp smoke/android-logcat.txt dist/
+        if: always()
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: smoke-android, path: dist/ }
+
   publish:
-    needs: [web, android, ios]
+    needs: [web, android, ios, android-device]
     runs-on: ubuntu-24.04
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-        with: { path: dist, merge-multiple: true }
+        with: { path: dl }
       - name: Attach builds to the build pre-release
         run: |
+          mkdir -p dist && cp dl/web/* dl/android/* dl/ios/* dl/smoke-android/*.png dist/
           V=$(node -p "require('./app/package.json').version"); TAG="build-$V"
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --target "$GITHUB_SHA" \
             --title "Lingua $V — CI build" --notes "Automatic builds of Lingua $V from GitHub Actions. Unsigned builds are signed before the final release."
