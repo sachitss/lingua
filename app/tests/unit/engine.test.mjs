@@ -47,9 +47,9 @@ test("old SM-2 progress gets a stability and difficulty", () => {
 });
 
 test("articles are stripped for Italian and French answers", () => {
-  assert.equal(coreWord("l'acqua"), "acqua");
-  assert.equal(coreWord("lo zaino"), "zaino");
-  assert.equal(coreWord("les yeux"), "yeux");
+  assert.equal(coreWord("l'acqua", "it"), "acqua");
+  assert.equal(coreWord("lo zaino", "it"), "zaino");
+  assert.equal(coreWord("les yeux", "fr"), "yeux");
   assert.ok(answerOk("pain", { fr: "le pain" }, "fr"));
   assert.ok(answerOk("acqua", { it: "l'acqua" }, "it"));
 });

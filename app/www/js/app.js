@@ -67,7 +67,7 @@ function nbGet(id){const c=customRec(id); if(c)return c; return (D.nb[P().target
 function nbSet(id,patch){const c=customRec(id); if(c){Object.assign(c,patch);persist();return}
   const nb=D.nb[P().target]=D.nb[P().target]||{}; nb[id]=Object.assign(nb[id]||{at:Date.now()},patch); persist()}
 function nbList(){const tl=P().target; const ids=Object.keys(D.nb[tl]||{}).filter(id=>BY[id]); return customFor(tl).map(i=>i.id).concat(ids)}
-function dictUrl(it,l){const core=coreWord(it[l]||""); const w=encodeURIComponent(core);
+function dictUrl(it,l){const core=coreWord(it[l]||"",l); const w=encodeURIComponent(core);
   return {en:`https://www.oxfordlearnersdictionaries.com/definition/english/${encodeURIComponent(core.toLowerCase().replace(/\s+/g,"-"))}`,
     de:`https://www.duden.de/suchen/dudenonline/${w}`,es:`https://dle.rae.es/${w}`,it:`https://www.treccani.it/vocabolario/ricerca/${w}/`,fr:`https://www.larousse.fr/dictionnaires/francais/${w}`,ko:`https://korean.dict.naver.com/koendict/#/search?query=${w}`,
     ne:`https://en.wiktionary.org/wiki/${w}`}[l]}
@@ -341,9 +341,9 @@ function vSession(){
     let prompt="";
     if(type==="mcq")prompt=`<p class="muted">${t("chooseT")}</p><div class="word">${known(item)}</div>`;
     if(type==="audio")prompt=`<p class="muted">${t("hear")}</p><div class="row"><button class="btn gold" data-a="say" data-id="${item.id}">${ic("play")}${t("listen")}</button><button class="btn" data-a="say" data-id="${item.id}" data-rate="0.6">${ic("slow")}${t("slow")}</button></div>`;
-    if(type==="fill"){const core=coreWord(item[tl]); const re=new RegExp(core.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"i"); prompt=`<p class="muted">${t("fill")}</p><div class="word md" lang="${tl}">${esc(item.ex[tl].replace(re,"_____"))}</div>${item.ex[kn]?`<p class="small muted">${esc(item.ex[kn])}</p>`:""}`}
+    if(type==="fill"){const core=coreWord(item[tl],tl); const re=new RegExp(core.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"i"); prompt=`<p class="muted">${t("fill")}</p><div class="word md" lang="${tl}">${esc(item.ex[tl].replace(re,"_____"))}</div>${item.ex[kn]?`<p class="small muted">${esc(item.ex[kn])}</p>`:""}`}
     body=prompt+`<div class="opts">${st.opts.map(id=>{const o=BY[id]; let cls=""; if(st.answered){if(id===item.id)cls="ok"; else if(id===st.pick)cls="no"}
-      const lab=type==="fill"?coreWord(o[tl]):o[tl];
+      const lab=type==="fill"?coreWord(o[tl],tl):o[tl];
       return `<button class="opt ${cls}" data-a="pick" data-id="${id}" ${st.answered?"disabled":""} lang="${tl}">${esc(lab)}${romOf(o,tl)?`<div class="rom">${esc(romOf(o,tl))}</div>`:""}</button>`}).join("")}</div>
       ${st.answered?feedback(st.ok,item)+nextBtn():""}`;
   }
@@ -741,7 +741,7 @@ function startGame(g){
 function endGame(G){stopGameTimer(); G.over=true; G.newBest=setBest(G.g,G.g==="memory"?G.moves:G.score); addXP(Math.min(30,G.score*2||5),null); render()}
 function speedQ(G){const it=G.pool[Math.floor(Math.random()*G.pool.length)]; const wrong=shuffle(G.pool.filter(x=>x.id!==it.id&&knownText(x)!==knownText(it))).slice(0,3); return {id:it.id,opts:shuffle([it,...wrong]).map(x=>x.id)}}
 const graphemes=s=>{try{return [...new Intl.Segmenter(undefined,{granularity:"grapheme"}).segment(s)].map(x=>x.segment)}catch(e){return [...s]}};
-const spellWord=i=>{const tl=P().target; return ["de","es","it","fr"].includes(tl)?coreWord(i[tl]):i[tl].replace(/^to /,"")};
+const spellWord=i=>{const tl=P().target; return ["de","es","it","fr"].includes(tl)?coreWord(i[tl],tl):i[tl].replace(/^to /,"")};
 function spellSetup(G){const w=G.words[G.i]; if(!w)return; const gs=graphemes(spellWord(w)); G.letters=gs; G.perm=shuffledOrder(gs.length); G.ans=[]; G.res=null}
 function vGame(){
   const G=ui.game; if(!G)return vLearn(); const tl=P().target;

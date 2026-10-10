@@ -322,3 +322,22 @@ for (const ui of ["en", "de", "es", "ne", "it", "fr"]) {
   S[ui].tag = ["en", "de", "es", "it", "fr", "ne"].map((l) => S[ui]["lang_" + l]).join(" · ");
   for (const k of Object.keys(S[ui])) if (typeof S[ui][k] === "string") S[ui][k] = S[ui][k].replace(/Bhasha/g, "Lingua");
 }
+
+// Number tips for Italian and French, and the romanisation switch (Nepali only now).
+const NUM_TIPS = {
+  en: { it: "Italian writes numbers below a million as one word. Tens drop their last vowel before uno and otto (ventuno, ventotto), and a final tre takes an accent (ventitré).",
+        fr: "French counts 70 as soixante-dix (60 + 10) and 80 as quatre-vingts (4 × 20). 21, 31 … 71 use et: vingt et un. Thousands are grouped with a space: 25 000." },
+  de: { it: "Italienisch schreibt Zahlen unter einer Million in einem Wort. Zehner verlieren vor uno und otto ihren Endvokal (ventuno, ventotto), ein tre am Ende bekommt einen Akzent (ventitré).",
+        fr: "Französisch zählt 70 als soixante-dix (60 + 10) und 80 als quatre-vingts (4 × 20). 21, 31 … 71 mit et: vingt et un. Tausender werden mit Leerzeichen gruppiert: 25 000." },
+  es: { it: "El italiano escribe en una sola palabra los números menores de un millón. Las decenas pierden la vocal final ante uno y otto (ventuno, ventotto) y un tre final lleva tilde (ventitré).",
+        fr: "El francés dice 70 como soixante-dix (60 + 10) y 80 como quatre-vingts (4 × 20). 21, 31 … 71 llevan et: vingt et un. Los miles se separan con un espacio: 25 000." },
+  it: { it: "In italiano i numeri sotto il milione si scrivono in una sola parola. Le decine perdono la vocale finale davanti a uno e otto (ventuno, ventotto) e il tre finale prende l'accento (ventitré).",
+        fr: "In francese 70 si dice soixante-dix (60 + 10) e 80 quatre-vingts (4 × 20). 21, 31 … 71 usano et: vingt et un. Le migliaia si separano con uno spazio: 25 000." },
+  fr: { it: "L'italien écrit les nombres inférieurs à un million en un seul mot. Les dizaines perdent leur voyelle finale devant uno et otto (ventuno, ventotto) et un tre final prend un accent (ventitré).",
+        fr: "En français, 70 se dit soixante-dix (60 + 10) et 80 quatre-vingts (4 × 20). 21, 31 … 71 prennent et : vingt et un. Les milliers sont séparés par une espace : 25 000." },
+  ne: { it: "इटालियनमा दस लाखभन्दा साना अङ्क एउटै शब्दमा लेखिन्छन्। uno र otto अगाडि दहाइको अन्तिम स्वर हराउँछ (ventuno, ventotto), र अन्तिम tre मा उच्चारण चिह्न लाग्छ (ventitré)।",
+        fr: "फ्रेन्चमा ७० लाई soixante-dix (६० + १०) र ८० लाई quatre-vingts (४ × २०) भनिन्छ। २१, ३१ … ७१ मा et लाग्छ: vingt et un। हजारहरू खाली ठाउँले छुट्याइन्छ: 25 000।" },
+};
+const SHOW_ROM = { en: "Show romanisation (Nepali)", de: "Umschrift zeigen (Nepali)", es: "Mostrar transcripción (nepalí)",
+  it: "Mostra la traslitterazione (nepalese)", fr: "Afficher la translittération (népalais)", ne: "रोमन लिपि देखाउनुहोस् (नेपाली)" };
+for (const ui of Object.keys(NUM_TIPS)) { S[ui].numTip_it = NUM_TIPS[ui].it; S[ui].numTip_fr = NUM_TIPS[ui].fr; S[ui].showRom = SHOW_ROM[ui]; }

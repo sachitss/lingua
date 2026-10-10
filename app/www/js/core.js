@@ -12,7 +12,7 @@ export const FSRS_W = [0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 
   2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755];
 const DECAY = -0.5, FACTOR = 19 / 81, RETENTION = 0.9, AGAIN_MIN = 10;
 /** Exercise types where the learner produces the word (active recall) rather than recognising it. */
-export const RECALL_TYPES = new Set(["type", "dictation", "translate", "write", "reverse"]);
+export const RECALL_TYPES = new Set(["type", "dictation", "translate", "write"]);
 
 export function newProgress() {
   return { reps: 0, ease: 2.5, ivl: 0, due: 0, lapses: 0, seen: 0, ok: 0, bad: 0, pron: [], s: 0, d: 0, rc: 0, rStreak: 0, rFirst: 0, rLast: 0, rTypes: [] };
@@ -40,7 +40,7 @@ export function migrateProgress(p) {
 function fsrsNext(p, g, now) {
   if (!p.s) return { s: FSRS_W[g - 1], d: d0(g) };
   const t = Math.max(0, (now - (p.last || now)) / DAY), r = retrievability(t, p.s);
-  const dNew = clampD(FSRS_W[7] * d0(4) + (1 - FSRS_W[7]) * (p.d - FSRS_W[6] * (g - 3)));
+  const dNew = clampD(FSRS_W[7] * d0(3) + (1 - FSRS_W[7]) * (p.d - FSRS_W[6] * (g - 3)));
   let s;
   if (g === 1) {
     s = Math.min(p.s, FSRS_W[11] * Math.pow(p.d, -FSRS_W[12]) * (Math.pow(p.s + 1, FSRS_W[13]) - 1) * Math.exp(FSRS_W[14] * (1 - r)));
@@ -55,7 +55,7 @@ function fsrsNext(p, g, now) {
 export function nextInterval(p, g, now = Date.now()) {
   p = migrateProgress(p ? { ...p } : newProgress());
   if (g === 1) return AGAIN_MIN / (24 * 60);
-  return Math.max(g === 2 && !p.s ? 0.5 : 1, intervalFor(fsrsNext(p, g, now).s));
+  return Math.max(g === 2 && !p.reps ? 0.5 : 1, intervalFor(fsrsNext(p, g, now).s));
 }
 
 /**
@@ -154,15 +154,23 @@ export function planNumbers({ minutes, prio, dueCount, accuracy }) {
   return { n, nNew, nDue, nPron, nRead };
 }
 
+/** Articles and infinitive markers removed before a word is blanked, typed or looked up, per learning language. */
+const LEAD = {
+  de: /^(der|die|das|sich)\s+/i,
+  en: /^to\s+/i,
+  es: /^(el|la|los|las)\s+/i,
+  it: /^(il|lo|la|i|gli|le)\s+|^l['’]/i,
+  fr: /^(le|la|les|se)\s+|^l['’]|^s['’](?!il\b)/i,
+};
+const LEAD_ANY = /^(der|die|das|to|sich|el|la|los|las)\s+/i;
 /** The word without its article or infinitive marker (der Tisch → Tisch, l'acqua → acqua, se souvenir → souvenir). */
-export function coreWord(s) {
-  return s.replace(/^(der|die|das|to|sich|el|la|los|las|il|lo|gli|i|le|les|un|una|uno|une|se|si)\s+/i, "")
-    .replace(/^(l|s)['’]/i, "").replace(/[¿¡?!.]/g, "").trim();
+export function coreWord(s, lang) {
+  return String(s || "").replace(LEAD[lang] || LEAD_ANY, "").replace(/[¿¡?!.]/g, "").trim();
 }
 export function blankable(item, lang) {
   const ex = item.ex && item.ex[lang];
   if (!ex) return false;
-  const core = coreWord(item[lang]);
+  const core = coreWord(item[lang], lang);
   return core.length > 1 && ex.toLowerCase().includes(core.toLowerCase());
 }
 /** Sentence split into tokens for the word-order exercise. */
@@ -182,7 +190,7 @@ export function shuffledOrder(n, rand = Math.random) {
   }
   return idx.reverse();
 }
-const short = (item, lang) => tokens(coreWord(item[lang] || "")).length <= 3;
+const short = (item, lang) => tokens(coreWord(item[lang] || "", lang)).length <= 3;
 
 /** Weighted choice of task type for a review item, following the learner's focus. */
 export function pickTaskType(item, isNew, prio, lang, rand = Math.random) {
@@ -245,7 +253,7 @@ export function buildSession(ctx) {
   const newIds = tasks.filter((x) => x.type === "study").map((x) => x.id);
   const late = [];
   newIds.forEach((id) => { if (tasks.length + late.length < n - nPron) late.push({ id, type: rand() < 0.5 ? "mcq" : "audio", why: "whyNew" }); });
-  Object.keys(prog).filter((id) => byId[id] && !used.has(id) && st(id) === "learning").forEach((id) => {
+  Object.keys(prog).filter((id) => byId[id] && !used.has(id) && st(id) === "learning" && prog[id].ivl < 1).forEach((id) => {
     if (tasks.length + late.length < n - nPron) add(id, pickTaskType(byId[id], false, prio, lang, rand), "whyLapse");
   });
   for (const i of words) {
@@ -283,14 +291,14 @@ export function looseText(s) {
 export function answerOk(input, item, lang) {
   const v = looseText(input);
   if (!v) return false;
-  if (v === looseText(coreWord(item[lang] || "")) || v === looseText(item[lang])) return true;
+  if (v === looseText(coreWord(item[lang] || "", lang)) || v === looseText(item[lang])) return true;
   const rom = item.rom && item.rom[lang];
   return !!rom && v === looseText(rom);
 }
 /** Writing check (a hint, not a verdict): does the learner's sentence contain the word or its stem? */
 export function usesWord(sentence, item, lang) {
   const s = String(sentence || "").toLowerCase();
-  const core = coreWord(item[lang] || "").toLowerCase().split(/\s+/)[0] || "";
+  const core = coreWord(item[lang] || "", lang).toLowerCase().split(/\s+/)[0] || "";
   if (!core) return false;
   let stem = core;
   if (lang === "ko") stem = core.replace(/(하다|다)$/, "") || core;
@@ -407,12 +415,12 @@ export const PREFERRED_VOICE = {
   ne: { f: /hemkala/, m: /sagar/ },
   ko: { f: /sunhi/, m: /injoon/ },
   es: { f: /elvira|ximena|abril|laura|helena|monica|paulina/, m: /alvaro|jorge|pablo|diego/ },
-  it: { f: /elsa|isabella|alice|federica|paola|fiamma/, m: /diego|giuseppe|luca|cosimo|benigno/ },
-  fr: { f: /denise|eloise|vivienne|amelie|audrey|marie|julie|celine/, m: /henri|remy|thomas|daniel|nicolas|paul/ },
+  it: { f: /elsa|isabella|alice|federica|paola|fiamma/, m: /diego|giuseppe|\bluca\b|cosimo|benigno/ },
+  fr: { f: /denise|eloise|vivienne|amelie|audrey|marie|julie|celine/, m: /\bhenri\b|\bremy\b|thomas|daniel|nicolas|\bpaul\b/ },
 };
 const GENDER_HINT = {
   f: /female|weiblich|katja|seraphina|amala|hedda|anna|petra|helena|vicki|marlene|sonia|libby|maisie|hazel|susan|kate|serena|samantha|karen|moira|tessa|fiona|zira|aria|jenny|hemkala|lekha|swara|sunhi|yuna|jimin|seoyeon|soonbok|yujin|heami|elvira|ximena|abril|laura|helena|monica|paulina|elsa|isabella|alice|federica|paola|fiamma|denise|eloise|vivienne|amelie|audrey|marie|julie|celine/,
-  m: /\bmale|männlich|conrad|killian|florian|stefan|markus|yannick|hans|ryan|thomas|daniel|oliver|george|arthur|alfie|david|mark\b|guy|sagar|rishi|madhur|injoon|hyunsu|bongjin|gookmin|minsu|alvaro|jorge|pablo|diego|giuseppe|luca|cosimo|benigno|henri|remy|thomas|nicolas|paul/,
+  m: /\bmale|männlich|conrad|killian|florian|stefan|markus|yannick|hans|ryan|thomas|daniel|oliver|george|arthur|alfie|david|mark\b|guy|sagar|rishi|madhur|injoon|hyunsu|bongjin|gookmin|minsu|alvaro|jorge|pablo|diego|giuseppe|\bluca\b|cosimo|benigno|\bhenri\b|\bremy\b|nicolas|\bpaul\b/,
 };
 const NATIVE_LOCALE = { de: "de-de", en: "en-gb", ne: "ne-np", ko: "ko-kr", es: "es-es", it: "it-it", fr: "fr-fr" };
 

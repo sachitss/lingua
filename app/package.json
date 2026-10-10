@@ -8,7 +8,6 @@
     "test": "node --test tests/unit/*.test.mjs",
     "e2e": "playwright test",
     "serve": "node tools/serve.mjs www 8080",
-    "build:web": "node tools/build-web.mjs",
     "sync": "cap sync",
     "check": "npm test && npm run e2e"
   },

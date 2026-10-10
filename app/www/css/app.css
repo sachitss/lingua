@@ -266,3 +266,4 @@ a.btn{text-decoration:none;color:inherit}
 .brand .codes{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;color:var(--muted);margin-left:2px}
 .eyebrow{font-family:var(--f-mono);letter-spacing:.08em}
 .powered .pb-logo img{width:150px;height:auto}
+@media (max-width:520px){.brand .codes{display:none}}

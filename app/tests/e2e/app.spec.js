@@ -27,6 +27,7 @@ async function expectClean(page) {
   const txt = await page.locator("body").innerText();
   expect(txt).not.toMatch(/\bundefined\b|\bNaN\b|\[object Object\]/);
   expect(txt).not.toMatch(/Bhasha/);
+  expect(txt).not.toMatch(/\b(numTip|lang|sit|lvl|sk|st|t)_[a-z]{2,}\b/); // untranslated interface keys
 }
 
 test("first visit: Lingua branding, onboarding, powered-by footer", async ({ page }) => {
@@ -137,8 +138,9 @@ for (const target of ["it", "fr"]) {
     await cv.first().click();
     await expectClean(page);
     await page.locator('.tab[data-r="learn"]').click();
-    const num = page.locator('[data-r="numbers"], [data-a="numbers"], [data-a="go"][data-r="numbers"]');
-    if (await num.count()) { await num.first().click(); await expectClean(page); }
+    await page.locator('[data-a="n_open"]').first().click();
+    await expectClean(page);
+    expect(await mainText(page)).toMatch(target === "it" ? /zero|uno|due/ : /zéro|un|deux/);
     expect(errors).toEqual([]);
   });
 }
