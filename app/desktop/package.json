@@ -1,0 +1,49 @@
+{
+  "name": "lingua-desktop",
+  "productName": "Lingua",
+  "version": "0.2.0",
+  "description": "Lingua – learn English, German, Spanish, Italian, French and Nepali. Powered by Ing.-Büro Sachit Shrestha.",
+  "author": "Ing.-Büro Sachit Shrestha",
+  "homepage": "https://github.com/sachitss/lingua",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "smoke": "electron . --smoke",
+    "dist:win": "electron-builder --win nsis --x64 --publish never",
+    "dist:mac": "electron-builder --mac dmg --x64 --arm64 --publish never",
+    "dist:linux": "electron-builder --linux AppImage --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "com.sachitss.lingua",
+    "productName": "Lingua",
+    "copyright": "© 2026 Ing.-Büro Sachit Shrestha",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "package.json"],
+    "extraResources": [{ "from": "../www", "to": "www" }],
+    "artifactName": "lingua-${version}-${os}-${arch}.${ext}",
+    "win": { "target": "nsis", "icon": "build/icon.png" },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Lingua",
+      "artifactName": "lingua-${version}-windows-setup.${ext}"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.png",
+      "category": "public.app-category.education",
+      "identity": null,
+      "extendInfo": { "NSMicrophoneUsageDescription": "Lingua records your voice so you can compare your pronunciation with the reference. Recordings stay on your device." }
+    },
+    "dmg": { "artifactName": "lingua-${version}-mac-${arch}.${ext}", "title": "Lingua ${version}" },
+    "linux": { "target": "AppImage", "icon": "build/icon.png", "category": "Education" }
+  }
+}

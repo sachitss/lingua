@@ -145,8 +145,32 @@ jobs:
         if: always()
         with: { name: smoke-android, path: dist/ }
 
+  desktop:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    defaults: { run: { working-directory: app/desktop, shell: bash } }
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/desktop/package-lock.json }
+      - run: npm ci
+      - name: Launch test (opens Lingua, checks brand, tabs and footer, no errors)
+        run: npx electron . --smoke
+      - name: Build the installer
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then npm run dist:win; else npm run dist:mac; fi
+          mkdir -p ../../dist && cp dist/*.exe dist/*.dmg ../../dist/ 2>/dev/null; ls -la ../../dist
+      - uses: actions/upload-artifact@v4
+        with: { name: "desktop-${{ runner.os }}", path: dist/ }
+
   publish:
-    needs: [web, android, ios, android-device]
+    needs: [web, android, ios, android-device, desktop]
     runs-on: ubuntu-24.04
     env:
       GH_TOKEN: ${{ github.token }}
@@ -156,7 +180,16 @@ jobs:
         with: { path: dl }
       - name: Attach builds to the build pre-release
         run: |
-          mkdir -p dist && cp dl/web/* dl/android/* dl/ios/* dl/smoke-android/*.png dist/
+          V=$(node -p "require('./app/package.json').version")
+          mkdir -p dist && cp dl/web/* dl/android/* dl/ios/* dl/smoke-android/*.png dl/desktop-*/* dist/
+          # One install package: signed Android builds from releases/, everything else from this build.
+          P="pkg/lingua-$V-install"; mkdir -p "$P"
+          cp releases/v$V/lingua-$V-android.apk releases/v$V/lingua-$V-android.aab releases/v$V/INSTALL.md releases/v$V/qr-*.png "$P/" 2>/dev/null || true
+          cp dist/lingua-$V-ios-unsigned.ipa dist/lingua-$V-web.zip dist/*.exe dist/*.dmg "$P/"
+          (cd "$P" && sha256sum lingua-* > SHA256SUMS.txt && cat SHA256SUMS.txt)
+          (cd pkg && zip -qr "../dist/lingua-$V-install-package.zip" "lingua-$V-install")
+          (cd dist && sha256sum lingua-* > SHA256SUMS.txt)
+          cat "$P/SHA256SUMS.txt" >> dist/SHA256SUMS.txt; sort -u -k2 dist/SHA256SUMS.txt -o dist/SHA256SUMS.txt
           V=$(node -p "require('./app/package.json').version"); TAG="build-$V"
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --target "$GITHUB_SHA" \
             --title "Lingua $V — CI build" --notes "Automatic builds of Lingua $V from GitHub Actions. Unsigned builds are signed before the final release."

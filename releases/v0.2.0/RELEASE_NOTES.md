@@ -9,7 +9,10 @@ Released 10 Oct 2026. Built from commit `b37dd49` by GitHub Actions run 38085331
 | `lingua-0.2.0-android.aab` | Google Play upload bundle | Signed with the Lingua release (upload) key |
 | `lingua-0.2.0-ios-unsigned.ipa` | iPhone and iPad, iOS 15 and later | Unsigned: needs your Apple Developer certificate to install or submit |
 | `lingua-0.2.0-ios-simulator.zip` | iOS Simulator (Xcode) | Not needed |
+| `lingua-0.2.0-windows-setup.exe` | Windows 10 and 11 desktop app (installer) | Unsigned: SmartScreen asks once |
+| `lingua-0.2.0-mac-arm64.dmg`, `lingua-0.2.0-mac-x64.dmg` | macOS desktop app (Apple silicon, Intel) | Not notarised: right-click → Open the first time |
 | `lingua-0.2.0-web.zip` | Web app (PWA): host the folder on any HTTPS server | Not needed |
+| `lingua-0.2.0-install-package.zip` | Everything above, plus `INSTALL.md` and QR codes | — |
 
 Android signing certificate: `CN=Sachit Shrestha, O=Ing.-Buero Sachit Shrestha, C=DE`, SHA-256 `8d:95:a5:d4:6d:92:5f:2c:b0:5e:af:37:bb:94:91:a6:64:fa:ed:48:28:78:94:00:6c:f2:7b:6d:9d:d3:d1:af`.
 
@@ -18,7 +21,7 @@ Android signing certificate: `CN=Sachit Shrestha, O=Ing.-Buero Sachit Shrestha, 
 - **Six learning languages and six interface languages**: English, German, Spanish, Italian, French and Nepali. Korean was removed.
 - **Italian and French added**: 227 words and phrases with example sentences, 6 reading texts, 6 conversations, 8 grammar topics, and number rules up to one million.
 - **FSRS spaced repetition** replaces SM-2. **Mastered** now needs active recall: 3 correct typed, dictated or translated answers in a row, in 2 kinds of exercise, over at least 7 days.
-- **Android, iOS and web app from one codebase** (Capacitor 8), tested and built automatically on GitHub.
+- **Android, iOS, web, Windows and Mac from one codebase** (Capacitor 8; Electron for the desktop apps), tested and built automatically on GitHub.
 
 ### Tests
 All passed. Details are in `TEST_REPORT.md`.
