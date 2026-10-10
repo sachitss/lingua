@@ -1,0 +1,14 @@
+:root {
+  --lingua-brand-navy: #14213D;
+  --lingua-brand-ink: #0E1526;
+  --lingua-surface-paper: #F7F6F2;
+  --lingua-text-secondary: #5A6275;
+  --lingua-white: #FFFFFF;
+  --lingua-lang-en: #3D6BFF;
+  --lingua-lang-de: #F5B21B;
+  --lingua-lang-es: #F0533F;
+  --lingua-lang-it: #22B07D;
+  --lingua-lang-fr: #A07BFF;
+  --lingua-font-ui: "Bricolage Grotesque", system-ui, sans-serif;
+  --lingua-font-label: "DM Mono", ui-monospace, monospace;
+}
