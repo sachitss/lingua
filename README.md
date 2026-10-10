@@ -17,6 +17,7 @@ Lingua is a multilingual, adaptive language-learning app for **English, German, 
 | [`brand/`](brand) | Logo, wordmark, app icons, favicon, splash screens and design tokens |
 | [`brand/source/`](brand/source) | The original Lingua logo boards (primary lockup, app icon variants) |
 | [`brand/powered-by/`](brand/powered-by) | Team Nepal Solutions logo for the "Powered by" line |
+| [`releases/`](releases) | Packaged releases with release notes, one folder per version |
 | [`tools/build_brand.py`](tools/build_brand.py) | Rebuilds everything in `brand/` from the master geometry |
 
 ## Release 1 decisions
