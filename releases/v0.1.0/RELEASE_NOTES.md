@@ -1,6 +1,6 @@
 # Lingua v0.1.0 — specification and brand
 
-Released 10 Oct 2026 · tag `v0.1.0`
+Released 10 Oct 2026 from `main`. To publish it as a GitHub release, draft a release with tag `v0.1.0` on `main` and attach the two files in this folder.
 
 First Lingua release: the specification and the brand package. **No app build is included yet.**
 
