@@ -164,8 +164,12 @@ jobs:
         run: npx electron . --smoke
       - name: Build the installer
         run: |
-          if [ "$RUNNER_OS" = "Windows" ]; then npm run dist:win; else npm run dist:mac; fi
-          mkdir -p ../../dist && cp dist/*.exe dist/*.dmg ../../dist/ 2>/dev/null; ls -la ../../dist
+          if [ "$RUNNER_OS" = "Windows" ]; then T=dist:win; else T=dist:mac; fi
+          set +e; npm run $T > build.log 2>&1; rc=$?; set -e; tail -40 build.log
+          [ $rc -eq 0 ] || { echo "::error title=Installer build::$(grep -iE 'error|failed|⨯' build.log | tail -6 | tr '\n' ' ')"; exit 1; }
+          shopt -s nullglob; files=(dist/*.exe dist/*.dmg)
+          [ ${#files[@]} -gt 0 ] || { echo "::error title=Installer build::no installer in dist: $(ls dist | tr '\n' ' ')"; exit 1; }
+          mkdir -p ../../dist && cp "${files[@]}" ../../dist/ && ls -la ../../dist
       - uses: actions/upload-artifact@v4
         with: { name: "desktop-${{ runner.os }}", path: dist/ }
 
