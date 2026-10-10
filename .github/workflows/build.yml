@@ -1,0 +1,128 @@
+# Tests Lingua, then builds the web app, Android (APK + Play bundle) and iOS (device archive + simulator app).
+# Builds are attached to the pre-release "build-<version>". Android is signed in CI only when the
+# LINGUA_KEYSTORE_* secrets exist; otherwise the release APK/AAB are unsigned and signed afterwards.
+name: Test and build
+
+on:
+  push:
+    branches: [main]
+    paths: ["app/**", ".github/workflows/build.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    defaults: { run: { working-directory: app } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/package-lock.json }
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - run: npx playwright install --with-deps chromium
+      - name: End-to-end tests (desktop and mobile Chromium)
+        run: npm run e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: test-report, path: app/playwright-report, retention-days: 14 }
+
+  web:
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package the web app (PWA)
+        run: |
+          V=$(node -p "require('./app/package.json').version")
+          mkdir -p dist && (cd app/www && zip -qr "../../dist/lingua-$V-web.zip" .)
+      - uses: actions/upload-artifact@v4
+        with: { name: web, path: dist/ }
+
+  android:
+    needs: test
+    runs-on: ubuntu-24.04
+    defaults: { run: { working-directory: app } }
+    env:
+      HAS_KEY: ${{ secrets.LINGUA_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/package-lock.json }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "21" }
+      - run: npm ci && npx cap sync android
+      - name: Use the release key (only when the secrets are set)
+        if: env.HAS_KEY == 'true'
+        run: |
+          echo "${{ secrets.LINGUA_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/lingua-release.jks"
+          echo "LINGUA_KEYSTORE_FILE=$RUNNER_TEMP/lingua-release.jks" >> "$GITHUB_ENV"
+          echo "LINGUA_KEYSTORE_PASSWORD=${{ secrets.LINGUA_KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
+          echo "LINGUA_KEY_ALIAS=${{ secrets.LINGUA_KEY_ALIAS }}" >> "$GITHUB_ENV"
+          echo "LINGUA_KEY_PASSWORD=${{ secrets.LINGUA_KEY_PASSWORD }}" >> "$GITHUB_ENV"
+      - name: Build release APK and Play bundle
+        working-directory: app/android
+        run: ./gradlew --no-daemon assembleRelease bundleRelease
+      - name: Collect outputs
+        run: |
+          V=$(node -p "require('./package.json').version"); S=$([ "$HAS_KEY" = true ] && echo signed || echo unsigned)
+          mkdir -p ../dist
+          cp "$(ls android/app/build/outputs/apk/release/*.apk | head -1)" "../dist/lingua-$V-android-$S.apk"
+          cp android/app/build/outputs/bundle/release/app-release.aab "../dist/lingua-$V-android-$S.aab"
+          ls -la ../dist
+      - uses: actions/upload-artifact@v4
+        with: { name: android, path: dist/ }
+
+  ios:
+    needs: test
+    runs-on: macos-15
+    defaults: { run: { working-directory: app } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with: { xcode-version: latest-stable }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/package-lock.json }
+      - run: npm ci && npx cap sync ios
+      - name: Archive for devices (unsigned)
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/Lingua.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" archive | tail -20
+      - name: Build for the iOS Simulator
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/sim" build | tail -20
+      - name: Package
+        run: |
+          V=$(node -p "require('./package.json').version"); mkdir -p ../dist "$RUNNER_TEMP/ipa/Payload"
+          cp -R "$RUNNER_TEMP/Lingua.xcarchive/Products/Applications/App.app" "$RUNNER_TEMP/ipa/Payload/"
+          (cd "$RUNNER_TEMP/ipa" && zip -qry "$GITHUB_WORKSPACE/dist/lingua-$V-ios-unsigned.ipa" Payload)
+          (cd "$RUNNER_TEMP/sim/Build/Products/Release-iphonesimulator" && zip -qry "$GITHUB_WORKSPACE/dist/lingua-$V-ios-simulator.zip" App.app)
+          ls -la ../dist
+      - uses: actions/upload-artifact@v4
+        with: { name: ios, path: dist/ }
+
+  publish:
+    needs: [web, android, ios]
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { path: dist, merge-multiple: true }
+      - name: Attach builds to the build pre-release
+        run: |
+          V=$(node -p "require('./app/package.json').version"); TAG="build-$V"
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --target "$GITHUB_SHA" \
+            --title "Lingua $V — CI build" --notes "Automatic builds of Lingua $V from GitHub Actions. Unsigned builds are signed before the final release."
+          gh release upload "$TAG" dist/* --clobber
+          echo "Built from $GITHUB_SHA (run $GITHUB_RUN_ID)" > dist/BUILD_INFO.txt && gh release upload "$TAG" dist/BUILD_INFO.txt --clobber

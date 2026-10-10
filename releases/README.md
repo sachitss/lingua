@@ -1,6 +1,6 @@
 # Releases
 
-Each folder holds one Lingua release: its packaged files and release notes. To publish one on GitHub, draft a release with the folder name as its tag and attach the files.
+Each folder holds one Lingua release: its packaged files and release notes. The "Publish releases" workflow turns each folder into a GitHub Release with the same tag.
 
 | Version | Date | Contents |
 | --- | --- | --- |

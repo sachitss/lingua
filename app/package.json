@@ -1,0 +1,27 @@
+{
+  "name": "lingua",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Lingua – learn English, German, Spanish, Italian, French and Nepali. Built on Bhasha 1.3.0. Powered by Ing.-Büro Sachit Shrestha.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/unit/*.test.mjs",
+    "e2e": "playwright test",
+    "serve": "node tools/serve.mjs www 8080",
+    "build:web": "node tools/build-web.mjs",
+    "sync": "cap sync",
+    "check": "npm test && npm run e2e"
+  },
+  "dependencies": {
+    "@capacitor-community/text-to-speech": "8.0.2",
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/ios": "8.5.3",
+    "@capacitor/local-notifications": "8.3.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.3",
+    "@playwright/test": "1.56.0"
+  },
+  "engines": { "node": ">=22" }
+}
