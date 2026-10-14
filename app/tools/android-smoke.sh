@@ -22,7 +22,10 @@ adb exec-out screencap -p > smoke/android-launch.png
 adb logcat -d > smoke/android-logcat.txt
 PID=$(adb shell pidof $PKG | tr -d '\r')
 echo "process: ${PID:-none}"
-CRASH=$(grep -E "FATAL EXCEPTION|AndroidRuntime: Process: $PKG|ANR in $PKG" smoke/android-logcat.txt | head -5 | tr '\n' ' ')
+# Only crashes of Lingua itself count; emulator system processes (e.g. Play services) sometimes crash on boot.
+CRASH=$(grep -E "AndroidRuntime: Process: $PKG|ANR in $PKG" smoke/android-logcat.txt | head -5 | tr '\n' ' ')
+OTHER=$(grep -E "FATAL EXCEPTION" smoke/android-logcat.txt | head -3 | tr '\n' ' ')
+[ -n "$OTHER" ] && [ -z "$CRASH" ] && echo "::warning title=Android launch test::crash in another process (ignored): $OTHER"
 JSERR=$(grep -E "Capacitor/Console.*(Uncaught|TypeError|ReferenceError|SyntaxError)" smoke/android-logcat.txt | head -5 | tr '\n' ' ')
 grep -E "Capacitor/Console" smoke/android-logcat.txt | head -20 || true
 [ -n "$CRASH" ] && fail "crash: $CRASH"
