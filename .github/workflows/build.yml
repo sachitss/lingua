@@ -84,6 +84,11 @@ jobs:
     needs: test
     runs-on: macos-15
     defaults: { run: { working-directory: app } }
+    # Signed IPA (App ID com.medtec24.lingua, team 5F8UXTYXYJ) only when the IOS_* secrets exist;
+    # TestFlight upload only when the ASC_* App Store Connect API key secrets exist as well.
+    env:
+      HAS_IOS_SIGNING: ${{ secrets.IOS_CERT_P12_BASE64 != '' && secrets.IOS_PROFILE_BASE64 != '' }}
+      HAS_ASC_KEY: ${{ secrets.ASC_KEY_P8_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: maxim-lobanov/setup-xcode@v1
@@ -111,6 +116,63 @@ jobs:
           (cd "$RUNNER_TEMP/ipa" && zip -qry "$GITHUB_WORKSPACE/dist/lingua-$V-ios-unsigned.ipa" Payload)
           (cd "$RUNNER_TEMP/sim/Build/Products/Release-iphonesimulator" && zip -qry "$GITHUB_WORKSPACE/dist/lingua-$V-ios-simulator.zip" App.app)
           ls -la ../dist
+      - name: Sign with the Apple distribution certificate (only when the secrets are set)
+        if: env.HAS_IOS_SIGNING == 'true'
+        env:
+          IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
+          IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+          IOS_PROFILE_BASE64: ${{ secrets.IOS_PROFILE_BASE64 }}
+        run: |
+          V=$(node -p "require('./package.json').version"); TEAM=5F8UXTYXYJ; BID=com.medtec24.lingua
+          KC="$RUNNER_TEMP/lingua.keychain-db"; KP=$(uuidgen)
+          echo "$IOS_CERT_P12_BASE64" | base64 -d > "$RUNNER_TEMP/dist.p12"
+          security create-keychain -p "$KP" "$KC" && security set-keychain-settings -lut 3600 "$KC" && security unlock-keychain -p "$KP" "$KC"
+          security import "$RUNNER_TEMP/dist.p12" -P "$IOS_CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KC"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KP" "$KC" >/dev/null
+          security list-keychains -d user -s "$KC" $(security list-keychains -d user | tr -d '"')
+          echo "$IOS_PROFILE_BASE64" | base64 -d > "$RUNNER_TEMP/lingua.mobileprovision"
+          security cms -D -i "$RUNNER_TEMP/lingua.mobileprovision" > "$RUNNER_TEMP/profile.plist"
+          UUID=$(plutil -extract UUID raw "$RUNNER_TEMP/profile.plist")
+          APPID=$(plutil -extract Entitlements.application-identifier raw "$RUNNER_TEMP/profile.plist")
+          [ "$APPID" = "$TEAM.$BID" ] || { echo "::error title=iOS signing::profile is for $APPID, expected $TEAM.$BID"; exit 1; }
+          if plutil -extract ProvisionedDevices raw "$RUNNER_TEMP/profile.plist" >/dev/null 2>&1; then METHOD=ad-hoc; else METHOD=app-store; fi
+          echo "IOS_EXPORT_METHOD=$METHOD" >> "$GITHUB_ENV"
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp "$RUNNER_TEMP/lingua.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/"$UUID".mobileprovision
+          # Manual signing for the App target only (its two build configurations); Swift packages stay unsigned.
+          sed -i '' "s/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual; PROVISIONING_PROFILE_SPECIFIER = \"$UUID\"; \"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"Apple Distribution\";/" ios/App/App.xcodeproj/project.pbxproj
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/Lingua-signed.xcarchive" archive | tail -20
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>$METHOD</string>
+            <key>teamID</key><string>$TEAM</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>provisioningProfiles</key><dict><key>$BID</key><string>$UUID</string></dict>
+            <key>uploadSymbols</key><true/>
+          </dict></plist>
+          EOF
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Lingua-signed.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" | tail -20
+          cp "$RUNNER_TEMP/export/App.ipa" "../dist/lingua-$V-ios.ipa"
+          codesign -dv --verbose=2 "$RUNNER_TEMP/export/App.ipa" 2>&1 | head -5 || true
+          ls -la ../dist
+      - name: Upload to TestFlight (only with an App Store profile and the API key secrets)
+        if: env.HAS_IOS_SIGNING == 'true' && env.HAS_ASC_KEY == 'true' && env.IOS_EXPORT_METHOD == 'app-store'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          V=$(node -p "require('./package.json').version")
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$ASC_KEY_P8_BASE64" | base64 -d > ~/.appstoreconnect/private_keys/AuthKey_"$ASC_KEY_ID".p8
+          xcrun altool --upload-app -f "../dist/lingua-$V-ios.ipa" -t ios --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+      - name: Remove the signing keychain
+        if: always() && env.HAS_IOS_SIGNING == 'true'
+        run: security delete-keychain "$RUNNER_TEMP/lingua.keychain-db" || true
       - uses: actions/upload-artifact@v4
         with: { name: ios, path: dist/ }
 
@@ -190,6 +252,7 @@ jobs:
           P="pkg/lingua-$V-install"; mkdir -p "$P"
           cp releases/v$V/lingua-$V-android.apk releases/v$V/lingua-$V-android.aab releases/v$V/INSTALL.md releases/v$V/qr-*.png "$P/" 2>/dev/null || true
           cp dist/lingua-$V-ios-unsigned.ipa dist/lingua-$V-web.zip dist/*.exe dist/*.dmg "$P/"
+          cp dist/lingua-$V-ios.ipa "$P/" 2>/dev/null || true   # signed iPhone app, when the IOS_* secrets are set
           (cd "$P" && sha256sum lingua-* > SHA256SUMS.txt && cat SHA256SUMS.txt)
           (cd pkg && zip -qr "../dist/lingua-$V-install-package.zip" "lingua-$V-install")
           (cd dist && sha256sum lingua-* > SHA256SUMS.txt)

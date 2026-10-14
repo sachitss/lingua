@@ -4,7 +4,7 @@
 
 Lingua is a multilingual, adaptive language-learning app for **English, German, Spanish, Italian, French and Nepali**. It is built on the existing Bhasha app (version 1.3.0), not written from scratch. It ships as an Android app, an iOS app and a web app (PWA) from one shared codebase.
 
-> **Status: v0.2.0 preview.** The app in [`app/`](app) runs on the web, Android and iOS. Italian and French content and the Italian and French interface are drafts awaiting review by native speakers. Accounts and sync (the backend) are not built yet; progress stays on the device.
+> **Status: v0.2.1 preview.** The app in [`app/`](app) runs on the web, Android and iOS. Italian and French content and the Italian and French interface are drafts awaiting review by native speakers. Accounts and sync (the backend) are not built yet; progress stays on the device.
 
 ## Contents
 
