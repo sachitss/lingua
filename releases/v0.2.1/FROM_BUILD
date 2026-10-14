@@ -1,9 +1,10 @@
 # Files copied from the CI pre-release build-0.2.1 when this release is published.
-# Android is left out: CI has no Lingua release key yet, so its APK/AAB are unsigned. v0.2.0 stays the Android download.
-lingua-0.2.1-ios-unsigned.ipa
+lingua-0.2.1-android-signed.apk
+lingua-0.2.1-android-signed.aab
 lingua-0.2.1-ios-simulator.zip
 lingua-0.2.1-web.zip
 lingua-0.2.1-windows-setup.exe
 lingua-0.2.1-mac-arm64.dmg
 lingua-0.2.1-mac-x64.dmg
+lingua-0.2.1-install-package.zip
 SHA256SUMS.txt
