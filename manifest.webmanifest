@@ -1,0 +1,20 @@
+{
+  "name": "Lingua – English · Deutsch · Español · Italiano · Français · नेपाली",
+  "short_name": "Lingua",
+  "description": "Learn English, German, Spanish, Italian, French and Nepali with native audio, spaced repetition (FSRS), pronunciation practice and travel phrases.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F7F6F2",
+  "theme_color": "#14213D",
+  "lang": "en",
+  "categories": ["education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lingua – learn English, German, Spanish, Italian, French and Nepali</title>
+<meta name="description" content="Learn English, German, Spanish, Italian, French and Nepali with native audio, spaced repetition, pronunciation practice and travel phrases.">
+<meta name="theme-color" content="#14213D" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1526" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'">
+<link rel="stylesheet" href="css/app.css">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<a class="sr" href="#main">Skip to content</a>
+
+<header class="top"><div class="top-in">
+  <div class="brand"><img src="icons/lingua-mark.svg" alt="" width="34" height="28"><b>lingua</b><span class="codes" aria-hidden="true">EN·DE·ES·IT·FR·NE</span></div>
+  <button class="pair" data-a="profile" id="pairBtn" aria-label="Profile and settings"></button>
+</div></header>
+<nav class="tabs" aria-label="Main"><div class="tabs-in" id="tabs"></div></nav>
+<main id="main" tabindex="-1"></main>
+<div id="layer"></div>
+<div id="live" class="sr" aria-live="polite"></div>
+
+<noscript><p style="padding:16px">Lingua needs JavaScript.</p></noscript>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
