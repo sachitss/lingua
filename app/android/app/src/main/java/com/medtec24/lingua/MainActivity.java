@@ -1,4 +1,4 @@
-package com.sachitss.lingua;
+package com.medtec24.lingua;
 
 import com.getcapacitor.BridgeActivity;
 

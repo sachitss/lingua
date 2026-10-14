@@ -1,5 +1,5 @@
 // Lingua service worker: app shell precached; audio cached on first play (or all at once via "download audio").
-const VERSION = "0.2.1";
+const VERSION = "0.2.2";
 const SHELL = `lingua-shell-${VERSION}`;
 const AUDIO = "lingua-audio-v1";
 const SHELL_FILES = [

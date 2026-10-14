@@ -2,7 +2,7 @@
 # Launch test on an Android emulator: install, start, screenshot, fail on a crash or a JavaScript error.
 # Problems are reported as GitHub annotations (::error::) so they are visible without the full log.
 set -u
-PKG=com.sachitss.lingua
+PKG=com.medtec24.lingua
 APK=app/android/app/build/outputs/apk/debug/app-debug.apk
 mkdir -p smoke
 fail() { echo "::error title=Android launch test::$1"; exit 1; }

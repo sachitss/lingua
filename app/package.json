@@ -1,6 +1,6 @@
 {
   "name": "lingua",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Lingua – learn English, German, Spanish, Italian, French and Nepali. Built on Bhasha 1.3.0. Powered by Ing.-Büro Sachit Shrestha.",
   "type": "module",
