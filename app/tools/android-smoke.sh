@@ -26,7 +26,8 @@ echo "process: ${PID:-none}"
 CRASH=$(grep -E "AndroidRuntime: Process: $PKG|ANR in $PKG" smoke/android-logcat.txt | head -5 | tr '\n' ' ')
 OTHER=$(grep -E "FATAL EXCEPTION" smoke/android-logcat.txt | head -3 | tr '\n' ' ')
 [ -n "$OTHER" ] && [ -z "$CRASH" ] && echo "::warning title=Android launch test::crash in another process (ignored): $OTHER"
-JSERR=$(grep -E "Capacitor/Console.*(Uncaught|TypeError|ReferenceError|SyntaxError)" smoke/android-logcat.txt | head -5 | tr '\n' ' ')
+# Capacitor's SystemBars can run its own (caught, then retried) safe-area script before the page exists: not a Lingua error.
+JSERR=$(grep -E "Capacitor/Console.*(Uncaught|TypeError|ReferenceError|SyntaxError)" smoke/android-logcat.txt | grep -v "Error injecting safe area CSS" | head -5 | tr '\n' ' ')
 grep -E "Capacitor/Console" smoke/android-logcat.txt | head -20 || true
 [ -n "$CRASH" ] && fail "crash: $CRASH"
 [ -n "$JSERR" ] && fail "JavaScript error: $JSERR"
