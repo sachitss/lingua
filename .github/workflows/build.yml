@@ -253,6 +253,7 @@ jobs:
           cp releases/v$V/lingua-$V-android.apk releases/v$V/lingua-$V-android.aab releases/v$V/INSTALL.md releases/v$V/qr-*.png "$P/" 2>/dev/null || true
           cp dist/lingua-$V-ios-unsigned.ipa dist/lingua-$V-web.zip dist/*.exe dist/*.dmg "$P/"
           cp dist/lingua-$V-ios.ipa "$P/" 2>/dev/null || true   # signed iPhone app, when the IOS_* secrets are set
+          cp dist/lingua-$V-android-signed.apk dist/lingua-$V-android-signed.aab "$P/" 2>/dev/null || true   # signed in CI with the LINGUA_KEYSTORE_* secrets
           (cd "$P" && sha256sum lingua-* > SHA256SUMS.txt && cat SHA256SUMS.txt)
           (cd pkg && zip -qr "../dist/lingua-$V-install-package.zip" "lingua-$V-install")
           (cd dist && sha256sum lingua-* > SHA256SUMS.txt)
