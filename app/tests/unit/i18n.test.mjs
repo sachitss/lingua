@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { S } from "../../www/js/i18n.js";
 
-const UI = ["en", "de", "es", "it", "fr", "ko", "ne"];
+const UI = ["en", "de", "es", "it", "fr", "ko", "ja", "ne"];
 test("every interface language has every string", () => {
   for (const l of UI) for (const k of Object.keys(S.en)) assert.ok(typeof S[l][k] === "string" && S[l][k].length, `${l}.${k}`);
 });

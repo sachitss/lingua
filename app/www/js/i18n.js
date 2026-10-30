@@ -1,4 +1,5 @@
-// Interface text in English, German, Spanish, Italian, French and Nepali (Korean strings remain from Bhasha but are not offered). The interface language is independent of the learning language.
+// Interface text in English, German, Spanish, Italian, French, Korean, Japanese and Nepali. The interface language is independent of the learning language.
+import { UI_JA } from "./ja.js";
 export const S = {
 en:{poweredBy:"Powered by",installApp:"Install app",download:"Download my data (JSON)",nativeAudio:"Built-in voice: {name}",deviceVoice:"device speech engine",offlineReady:"Ready to use offline",neTip:"For a native Nepali voice on Windows, open this page in Microsoft Edge: it includes Hemkala (female) and Sagar (male), which Bhasha selects automatically.",voiceGender:"Voice",g_f:"Female",g_m:"Male",voices:"Voices",voiceFor:"{lang} voice",autoVoice:"Best native voice (automatic)",testVoice:"Test",deTip:"For a natural native German voice: on Windows, open this page in Microsoft Edge and pick Katja or Conrad (Natural). On iPhone or Mac, download Anna (Enhanced) under Settings → Accessibility → Spoken Content → Voices → German. On Android, add German in Google speech services. Voices marked ★ are the high-quality ones.",tag:"German · English · Nepali · Korean",home:"Home",learn:"Learn",words:"Words",speak:"Speak",travel:"Travel",progress:"Progress",profile:"Profile",
  plan:"Today's plan",min:"min",start:"Start today's session",resume:"Resume session",due:"to review",newW:"new words",pronT:"pronunciation",listenT:"listening",
@@ -359,3 +360,26 @@ for (const ui of ["en", "de", "es", "it", "fr", "ne", "ko"]) {
   S[ui].tag = ["en", "de", "es", "it", "fr", "ko", "ne"].map((l) => S[ui]["lang_" + l]).join(" · ");
 }
 for (const k of Object.keys(S.ko)) if (typeof S.ko[k] === "string") S.ko[k] = S.ko[k].replace(/Bhasha/g, "Lingua").replace(/바샤/g, "Lingua");
+
+/* ---------- Lingua 0.3.0: Japanese as a learning and interface language ---------- */
+S.ja = Object.assign({}, S.en, UI_JA);
+const JA_NAME = { en: "Japanese", de: "Japanisch", es: "Japonés", it: "Giapponese", fr: "Japonais", ne: "जापानी", ko: "일본어", ja: "日本語" };
+const NUM_TIP_JA = {
+  en: "These are the Sino-Japanese numbers (ichi, ni, san …) used for counting, prices and dates. 4 and 7 have two readings (yon/shi, nana/shichi). 10,000 is its own unit, man (万), so a million is hyakuman (百万). Watch the sound changes: sanbyaku (300), roppyaku (600), happyaku (800), sanzen (3,000), hassen (8,000).",
+  de: "Das sind die sinojapanischen Zahlen (ichi, ni, san …) für Zahlen, Preise und Daten. 4 und 7 haben zwei Lesungen (yon/shi, nana/shichi). 10.000 ist eine eigene Einheit, man (万) – eine Million ist also hyakuman (百万). Achte auf Lautänderungen: sanbyaku (300), roppyaku (600), happyaku (800), sanzen (3.000), hassen (8.000).",
+  es: "Son los números sinojaponeses (ichi, ni, san…) para contar, precios y fechas. El 4 y el 7 tienen dos lecturas (yon/shi, nana/shichi). 10 000 es una unidad propia, man (万), así que un millón es hyakuman (百万). Ojo a los cambios de sonido: sanbyaku (300), roppyaku (600), happyaku (800), sanzen (3000), hassen (8000).",
+  it: "Questi sono i numeri sino-giapponesi (ichi, ni, san…) usati per contare, per i prezzi e le date. Il 4 e il 7 hanno due letture (yon/shi, nana/shichi). 10.000 è un'unità a sé, man (万): un milione è quindi hyakuman (百万). Attenzione ai cambi di suono: sanbyaku (300), roppyaku (600), happyaku (800), sanzen (3.000), hassen (8.000).",
+  fr: "Ce sont les nombres sino-japonais (ichi, ni, san…) pour compter, les prix et les dates. 4 et 7 ont deux lectures (yon/shi, nana/shichi). 10 000 est une unité à part, man (万) : un million se dit donc hyakuman (百万). Attention aux changements de son : sanbyaku (300), roppyaku (600), happyaku (800), sanzen (3 000), hassen (8 000).",
+  ne: "यी चिनियाँ-जापानी अङ्क हुन् (ichi, ni, san …), जुन गन्ती, मूल्य र मितिमा प्रयोग हुन्छन्। ४ र ७ का दुई उच्चारण छन् (yon/shi, nana/shichi)। १०,००० को आफ्नै एकाइ छ, man (万), त्यसैले दस लाख hyakuman (百万) हो। ध्वनि परिवर्तनमा ध्यान दिनुहोस्: sanbyaku (३००), roppyaku (६००), happyaku (८००), sanzen (३,०००), hassen (८,०००)।",
+  ko: "숫자, 가격, 날짜에 쓰는 한자어 수사(ichi, ni, san …)예요. 4와 7은 읽는 법이 두 가지예요(yon/shi, nana/shichi). 10,000은 man(万)이라는 단위라서 백만은 hyakuman(百万)이에요. 소리가 바뀌는 데 주의하세요: sanbyaku(300), roppyaku(600), happyaku(800), sanzen(3,000), hassen(8,000).",
+};
+const SHOW_ROM_JA = { en: "Show romanisation (Nepali, Korean, Japanese)", de: "Umschrift zeigen (Nepali, Koreanisch, Japanisch)",
+  es: "Mostrar transcripción (nepalí, coreano, japonés)", it: "Mostra la traslitterazione (nepalese, coreano, giapponese)",
+  fr: "Afficher la translittération (népalais, coréen, japonais)", ne: "रोमन लिपि देखाउनुहोस् (नेपाली, कोरियाली, जापानी)",
+  ko: "로마자 표기 보기 (네팔어, 한국어, 일본어)", ja: "ローマ字表記を表示（ネパール語、韓国語、日本語）" };
+for (const ui of ["en", "de", "es", "it", "fr", "ne", "ko", "ja"]) {
+  S[ui].lang_ja = JA_NAME[ui];
+  if (ui !== "ja") S[ui].numTip_ja = NUM_TIP_JA[ui];
+  S[ui].showRom = SHOW_ROM_JA[ui];
+  S[ui].tag = ["en", "de", "es", "it", "fr", "ko", "ja", "ne"].map((l) => S[ui]["lang_" + l]).join(" · ");
+}

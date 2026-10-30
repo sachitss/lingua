@@ -1,5 +1,6 @@
 // Interactive conversations (chatbot-style dialogues) and grammar topics.
 import { DIALOGS_ITFR, GRAMMAR_ITFR, GRAMMAR_UI_ITFR } from "./itfr.js";
+import { DIALOGS_JA, GRAMMAR_JA, GRAMMAR_UI_JA } from "./ja.js";
 // Dialogue line: [who, de, en, es, ne, neRom, ko, koRom] – "b" = the app's character speaks, "m" = the learner answers.
 
 const L5 = (de, en, es, ne, ko) => ({ de, en, es, ne, ko });
@@ -82,9 +83,10 @@ const RAW_DIALOGS = [
 /** Dialogues as {id, sit, level, title, lines:[{id, who, de, en, es, ne, ko, rom:{ne, ko}}]}; line ids like c1.3 (audio key). */
 export const DIALOGS = RAW_DIALOGS.map((d) => ({
   ...d,
-  title: { ...d.title, it: DIALOGS_ITFR[d.id]?.title.it, fr: DIALOGS_ITFR[d.id]?.title.fr },
+  title: { ...d.title, it: DIALOGS_ITFR[d.id]?.title.it, fr: DIALOGS_ITFR[d.id]?.title.fr, ja: DIALOGS_JA[d.id]?.title },
   lines: d.lines.map(([who, de, en, es, ne, neR, ko, koR], i) => ({ id: `${d.id}.${i}`, who, de, en, es, ne, ko,
-    it: DIALOGS_ITFR[d.id]?.lines[i]?.it, fr: DIALOGS_ITFR[d.id]?.lines[i]?.fr, rom: { ne: neR, ko: koR } })),
+    it: DIALOGS_ITFR[d.id]?.lines[i]?.it, fr: DIALOGS_ITFR[d.id]?.lines[i]?.fr, ja: DIALOGS_JA[d.id]?.lines[i]?.t,
+    rom: { ne: neR, ko: koR, ja: DIALOGS_JA[d.id]?.lines[i]?.r } })),
 }));
 export const DIALOG_BY = Object.fromEntries(DIALOGS.map((d) => [d.id, d]));
 
@@ -264,6 +266,9 @@ const ITFR_KO = {
     "명사는 남성(le) 아니면 여성(la)이에요: le livre, la maison. 모음이나 묵음 h 앞에서는 둘 다 l'가 돼요: l'ami, l'eau, l'hôtel. -tion으로 끝나는 말은 대개 여성, -ment과 -age로 끝나는 말은 대개 남성이에요."],
 };
 for (const g of G) if (ITFR_KO[g.id]) { g.title.ko = ITFR_KO[g.id][0]; g.rule.ko = ITFR_KO[g.id][1]; }
+// Lingua 0.3.0: Japanese grammar topics, and Japanese explanations of all other topics.
+for (const g of GRAMMAR_JA) G.push({ ...g, title: { ...g.title }, rule: { ...g.rule } });
+for (const g of G) if (GRAMMAR_UI_JA[g.id]) { g.title.ja = GRAMMAR_UI_JA[g.id].title; g.rule.ja = GRAMMAR_UI_JA[g.id].rule; }
 export const GRAMMAR = G;
 export const GRAMMAR_BY = Object.fromEntries(G.map((g) => [g.id, g]));
 

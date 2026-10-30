@@ -1,4 +1,4 @@
-// Numbers in words for German, English, Spanish, Italian, French, Nepali and Korean, 0 to 1,000,000.
+// Numbers in words for German, English, Spanish, Italian, French, Nepali, Korean and Japanese, 0 to 1,000,000.
 // A number is returned as parts [{k, t, r}] – k: audio key, t: text, r: romanisation (Nepali, Korean).
 // Each part has its own recorded clip, so 347 plays "three hundred and" + "forty-seven".
 
@@ -114,6 +114,25 @@ function ko9999(n) {
   return { t: out.join(""), r: rom.join("-") };
 }
 
+/* ---------- Japanese (Sino-Japanese numbers, written in hiragana with romaji) ---------- */
+const JA1 = ["", "いち", "に", "さん", "よん", "ご", "ろく", "なな", "はち", "きゅう"];
+const JA1_R = ["", "ichi", "ni", "san", "yon", "go", "roku", "nana", "hachi", "kyū"];
+const JA100 = ["", "ひゃく", "にひゃく", "さんびゃく", "よんひゃく", "ごひゃく", "ろっぴゃく", "ななひゃく", "はっぴゃく", "きゅうひゃく"];
+const JA100_R = ["", "hyaku", "nihyaku", "sanbyaku", "yonhyaku", "gohyaku", "roppyaku", "nanahyaku", "happyaku", "kyūhyaku"];
+const JA1000 = ["", "せん", "にせん", "さんぜん", "よんせん", "ごせん", "ろくせん", "ななせん", "はっせん", "きゅうせん"];
+const JA1000_R = ["", "sen", "nisen", "sanzen", "yonsen", "gosen", "rokusen", "nanasen", "hassen", "kyūsen"];
+/** 1–99 */
+function ja99(n) {
+  const t = Math.floor(n / 10), u = n % 10;
+  const tt = t ? (t === 1 ? "" : JA1[t]) + "じゅう" : "", tr = t ? (t === 1 ? "" : JA1_R[t]) + "jū" : "";
+  return { t: tt + JA1[u], r: tr + JA1_R[u] };
+}
+/** 1–9999 as one word */
+function ja9999(n) {
+  const th = Math.floor(n / 1000), h = Math.floor((n % 1000) / 100), r = n % 100, x = ja99(r);
+  return { t: JA1000[th] + JA100[h] + x.t, r: JA1000_R[th] + JA100_R[h] + x.r };
+}
+
 /* ---------- Parts ---------- */
 const P = (k, t, r) => (r ? { k, t, r } : { k, t });
 /** The words for n (0–1,000,000) as audio parts. */
@@ -180,6 +199,16 @@ export function numParts(n, lang) {
     if (r2) { const x = ko9999(r2); out.push(P("n" + r2, x.t, x.r)); }
     return out;
   }
+  if (lang === "ja") {
+    if (n === 0) return [P("n0", "ゼロ", "zero")];
+    const out = [], man = Math.floor(n / 10000), rest = n % 10000;
+    if (man) { const m = ja9999(man); out.push(P("n" + man * 10000, m.t + "まん", m.r + "man")); }
+    const th = Math.floor(rest / 1000), h = Math.floor((rest % 1000) / 100), r = rest % 100;
+    if (th) out.push(P("n" + th * 1000, JA1000[th], JA1000_R[th]));
+    if (h) out.push(P("n" + h * 100, JA100[h], JA100_R[h]));
+    if (r) { const x = ja99(r); out.push(P("n" + r, x.t, x.r)); }
+    return out;
+  }
   throw new Error("unknown language " + lang);
 }
 /** Written form: German joins parts without spaces below a million; Korean puts a space after 만. */
@@ -187,6 +216,7 @@ export function numWords(n, lang) {
   const p = numParts(n, lang);
   if (lang === "de" || lang === "it") return p.map((x) => x.t).join("");
   if (lang === "ko") return p.map((x) => x.t).join("").replace(/만(?=.)/, "만 ");
+  if (lang === "ja") return p.map((x) => x.t).join("");
   return p.map((x) => x.t).join(" ");
 }
 export function numRom(n, lang) {

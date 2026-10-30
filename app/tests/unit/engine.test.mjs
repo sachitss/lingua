@@ -55,7 +55,7 @@ test("articles are stripped for Italian and French answers", () => {
 });
 
 test("a session can be built for every learning language and known language", () => {
-  for (const target of ["en", "de", "es", "it", "fr", "ko", "ne"]) for (const known of ["en", "de", "ne"]) {
+  for (const target of ["en", "de", "es", "it", "fr", "ko", "ja", "ne"]) for (const known of ["en", "de", "ne"]) {
     if (known === target) continue;
     const tasks = buildSession({ items: ITEMS, words: WORDS, prog: {}, profile: { target, known, level: "b", minutes: 20, prio: {} },
       wotdId: "g1", dueIds: [], accuracy: null, readId: "rd1", rand: () => 0.4 });

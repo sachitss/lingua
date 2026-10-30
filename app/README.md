@@ -5,7 +5,7 @@ Lingua 0.3.0 is built on the Bhasha 1.3.0 code (plain JavaScript ES modules in `
 | Command | What it does |
 | --- | --- |
 | `npm ci` | Install Capacitor and the test tools |
-| `npm test` | Unit tests: content in seven languages, numbers, FSRS scheduling, interface strings |
+| `npm test` | Unit tests: content in eight languages, numbers, FSRS scheduling, interface strings |
 | `npm run e2e` | Browser tests with Playwright (desktop and mobile Chromium) |
 | `npm run serve` | Serve `www/` on http://localhost:8080 |
 | `npx cap sync` | Copy `www/` into the Android and iOS projects |
@@ -32,3 +32,8 @@ The build always makes an unsigned IPA. It also makes a signed `lingua-<version>
 With an App Store profile, adding an App Store Connect API key also uploads the build to TestFlight: `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_KEY_P8_BASE64` (the `.p8` file, base64-encoded). To base64-encode a file on Windows: `certutil -encodehex -f file.p12 file.txt 0x40000001`; on a Mac: `base64 -i file.p12 | pbcopy`.
 
 Italian and French content (`www/js/itfr.js`) and the Italian and French interface were drafted for 0.2.0 and need review by native speakers before a store release.
+
+### Built-in audio
+Native recordings for every word, example, reading text, number part, conversation line and grammar row are generated with Azure Neural TTS (`tools/generate-audio.mjs`, voices listed in `www/audio/CREDITS.md`). Only missing or changed clips are generated (`www/audio/hashes.json`). Run in `app/` with `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` set; ffmpeg is required.
+
+Japanese content (`www/js/ja.js`) was drafted for 0.3.0 and needs review by a native speaker before a store release.

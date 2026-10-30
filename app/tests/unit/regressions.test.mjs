@@ -8,7 +8,7 @@ import { S } from "../../www/js/i18n.js";
 const T0 = Date.UTC(2026, 9, 10, 8);
 
 test("number tips exist for Italian and French in every interface language", () => {
-  for (const ui of ["en", "de", "es", "it", "fr", "ko", "ne"]) for (const l of ["it", "fr", "ko"]) assert.ok(S[ui]["numTip_" + l], `${ui}.numTip_${l}`);
+  for (const ui of ["en", "de", "es", "it", "fr", "ko", "ja", "ne"]) for (const l of ["it", "fr", "ko", "ja"]) assert.ok(S[ui]["numTip_" + l], `${ui}.numTip_${l}`);
 });
 
 test("articles are removed per language only", () => {
