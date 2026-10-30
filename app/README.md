@@ -1,11 +1,11 @@
 # Lingua app
 
-Lingua 0.2.1 is built on the Bhasha 1.3.0 code (plain JavaScript ES modules in `www/`, wrapped with Capacitor for Android and iOS).
+Lingua 0.3.0 is built on the Bhasha 1.3.0 code (plain JavaScript ES modules in `www/`, wrapped with Capacitor for Android and iOS).
 
 | Command | What it does |
 | --- | --- |
 | `npm ci` | Install Capacitor and the test tools |
-| `npm test` | Unit tests: content in six languages, numbers, FSRS scheduling, interface strings |
+| `npm test` | Unit tests: content in seven languages, numbers, FSRS scheduling, interface strings |
 | `npm run e2e` | Browser tests with Playwright (desktop and mobile Chromium) |
 | `npm run serve` | Serve `www/` on http://localhost:8080 |
 | `npx cap sync` | Copy `www/` into the Android and iOS projects |

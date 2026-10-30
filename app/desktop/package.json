@@ -1,8 +1,8 @@
 {
   "name": "lingua-desktop",
   "productName": "Lingua",
-  "version": "0.2.2",
-  "description": "Lingua – learn English, German, Spanish, Italian, French and Nepali. Powered by Ing.-Büro Sachit Shrestha.",
+  "version": "0.3.0",
+  "description": "Lingua – learn English, German, Spanish, Italian, French, Korean and Nepali. Powered by Ing.-Büro Sachit Shrestha.",
   "author": "Ing.-Büro Sachit Shrestha",
   "homepage": "https://github.com/sachitss/lingua",
   "main": "main.js",

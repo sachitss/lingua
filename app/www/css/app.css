@@ -29,8 +29,8 @@
   --brand:#14213D; --brand-ink:#F7F6F2; --accent:#F5B21B; --accent-ink:#14213D; --accent-soft:#FCEFCC;
   --good:#1E7A4C; --warn:#A85A06; --bad:#B42318;
   --l-en:#3D6BFF; --l-de:#F5B21B; --l-es:#F0533F; --l-it:#22B07D; --l-fr:#A07BFF; --l-ne:#14213D;
-  --f-display:"Bricolage Grotesque","Mukta","Noto Sans Devanagari",system-ui,sans-serif;
-  --f-body:"Bricolage Grotesque","Mukta","Noto Sans Devanagari",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-display:"Bricolage Grotesque","Mukta","Noto Sans Devanagari","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",system-ui,sans-serif;
+  --f-body:"Bricolage Grotesque","Mukta","Noto Sans Devanagari","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"DM Mono","Mukta",ui-monospace,monospace;
   --r:14px;
 }

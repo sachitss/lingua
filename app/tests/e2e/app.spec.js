@@ -1,10 +1,10 @@
-// End-to-end checks of the Lingua web build: branding, six languages, sessions, progress and the practice areas.
+// End-to-end checks of the Lingua web build: branding, seven languages, sessions, progress and the practice areas.
 import { test, expect } from "@playwright/test";
 
-const LANGS = ["en", "de", "es", "it", "fr", "ne"];
+const LANGS = ["en", "de", "es", "it", "fr", "ko", "ne"];
 const PAIRS = [ // [interface, known, target]
   ["en", "en", "de"], ["de", "de", "en"], ["es", "es", "it"], ["it", "it", "fr"], ["fr", "fr", "es"], ["ne", "ne", "de"],
-  ["en", "en", "it"], ["en", "en", "fr"], ["en", "en", "ne"], ["de", "de", "ne"],
+  ["en", "en", "it"], ["en", "en", "fr"], ["en", "en", "ne"], ["de", "de", "ne"], ["ko", "ko", "en"], ["en", "en", "ko"], ["de", "de", "ko"],
 ];
 
 /** Fails the test on any page error or console error. */
@@ -83,7 +83,7 @@ async function answerTask(page) {
   return "other";
 }
 
-for (const target of ["it", "fr", "ne"]) {
+for (const target of ["it", "fr", "ko", "ne"]) {
   test(`a daily session runs in ${target} and stores FSRS progress`, async ({ page }) => {
     const errors = watchErrors(page);
     await preset(page, { ui: "en", known: "en", target });
@@ -121,17 +121,17 @@ test("switching the learning language keeps progress in the other language", asy
   expect(after).toBe(before);
 });
 
-for (const target of ["it", "fr"]) {
+for (const target of ["it", "fr", "ko"]) {
   test(`numbers, grammar and conversations work in ${target}`, async ({ page }) => {
     const errors = watchErrors(page);
     await preset(page, { ui: target, known: "en", target });
     await page.goto("/");
     await page.locator('.tab[data-r="learn"]').click();
     const gr = page.locator('[data-a="gr_open"]');
-    expect(await gr.count()).toBeGreaterThanOrEqual(4);
+    expect(await gr.count()).toBeGreaterThanOrEqual(target === "ko" ? 3 : 4);
     await gr.first().click();
     await expectClean(page);
-    expect(await mainText(page)).toMatch(/___|[a-zàèéìòù]/i);
+    expect(await mainText(page)).toMatch(target === "ko" ? /___|[가-힣]/ : /___|[a-zàèéìòù]/i);
     await page.locator('.tab[data-r="learn"]').click();
     const cv = page.locator('[data-a="cv_open"]');
     expect(await cv.count()).toBeGreaterThanOrEqual(6);
@@ -140,7 +140,7 @@ for (const target of ["it", "fr"]) {
     await page.locator('.tab[data-r="learn"]').click();
     await page.locator('[data-a="n_open"]').first().click();
     await expectClean(page);
-    expect(await mainText(page)).toMatch(target === "it" ? /zero|uno|due/ : /zéro|un|deux/);
+    expect(await mainText(page)).toMatch(target === "it" ? /zero|uno|due/ : target === "ko" ? /영|일|이|삼/ : /zéro|un|deux/);
     expect(errors).toEqual([]);
   });
 }

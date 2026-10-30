@@ -341,3 +341,21 @@ const NUM_TIPS = {
 const SHOW_ROM = { en: "Show romanisation (Nepali)", de: "Umschrift zeigen (Nepali)", es: "Mostrar transcripción (nepalí)",
   it: "Mostra la traslitterazione (nepalese)", fr: "Afficher la translittération (népalais)", ne: "रोमन लिपि देखाउनुहोस् (नेपाली)" };
 for (const ui of Object.keys(NUM_TIPS)) { S[ui].numTip_it = NUM_TIPS[ui].it; S[ui].numTip_fr = NUM_TIPS[ui].fr; S[ui].showRom = SHOW_ROM[ui]; }
+
+/* ---------- Lingua 0.3.0: Korean as a learning and interface language ---------- */
+Object.assign(S.ko, {
+  lang_it: "이탈리아어", lang_fr: "프랑스어",
+  numTip_it: "이탈리아어는 백만 미만의 수를 한 단어로 붙여 써요. uno와 otto 앞에서는 십의 자리 끝 모음이 빠지고(ventuno, ventotto), 끝에 오는 tre에는 강세 표시가 붙어요(ventitré).",
+  numTip_fr: "프랑스어는 70을 soixante-dix(60 + 10), 80을 quatre-vingts(4 × 20)라고 해요. 21, 31 … 71에는 et를 넣어요: vingt et un. 천 단위는 띄어서 써요: 25 000.",
+});
+const KO_NAME = { en: "Korean", de: "Koreanisch", es: "Coreano", it: "Coreano", fr: "Coréen", ne: "कोरियाली", ko: "한국어" };
+const SHOW_ROM_KO = { en: "Show romanisation (Nepali, Korean)", de: "Umschrift zeigen (Nepali, Koreanisch)",
+  es: "Mostrar transcripción (nepalí, coreano)", it: "Mostra la traslitterazione (nepalese, coreano)",
+  fr: "Afficher la translittération (népalais, coréen)", ne: "रोमन लिपि देखाउनुहोस् (नेपाली, कोरियाली)",
+  ko: "로마자 표기 보기 (네팔어, 한국어)" };
+for (const ui of ["en", "de", "es", "it", "fr", "ne", "ko"]) {
+  S[ui].lang_ko = KO_NAME[ui];
+  S[ui].showRom = SHOW_ROM_KO[ui];
+  S[ui].tag = ["en", "de", "es", "it", "fr", "ko", "ne"].map((l) => S[ui]["lang_" + l]).join(" · ");
+}
+for (const k of Object.keys(S.ko)) if (typeof S.ko[k] === "string") S.ko[k] = S.ko[k].replace(/Bhasha/g, "Lingua").replace(/바샤/g, "Lingua");

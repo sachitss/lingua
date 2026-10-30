@@ -26,14 +26,14 @@ D.profile.prio=normPrio(D.profile.prio);
 for(const tl of Object.keys(D.prog))for(const id of Object.keys(D.prog[tl]))migrateProgress(D.prog[tl][id]);
 if(hadData&&!hadOb)D.profile.onboarded=true;
 // First visit: interface follows the device language when it is one of ours.
-try{if(!localStorage.getItem(KEY)){const nl=(navigator.language||"en").slice(0,2); if(["de","ne","es","it","fr"].includes(nl)){D.profile.ui=nl; D.profile.known=nl; D.profile.target=nl==="de"?"ne":nl==="ne"?"de":"en"}}}catch(e){}
+try{if(!localStorage.getItem(KEY)){const nl=(navigator.language||"en").slice(0,2); if(["de","ne","es","it","fr","ko"].includes(nl)){D.profile.ui=nl; D.profile.known=nl; D.profile.target=nl==="de"?"ne":nl==="ne"?"de":"en"}}}catch(e){}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
 const P=()=>D.profile;
 const t=(k,v)=>{let s=(S[P().ui]&&S[P().ui][k])??S.en[k]??k; if(v)for(const x in v)s=s.replace("{"+x+"}",v[x]); return s};
-const LANGS=["en","de","es","it","fr","ne"]; // Lingua: interface, known and learning languages
+const LANGS=["en","de","es","it","fr","ko","ne"]; // Lingua: interface, known and learning languages
 const LOCALE={de:"de-DE",en:"en-GB",ne:"ne-NP",ko:"ko-KR",es:"es-ES",it:"it-IT",fr:"fr-FR"};
 const UI_NAME={de:"Deutsch",en:"English",ne:"नेपाली",ko:"한국어",es:"Español",it:"Italiano",fr:"Français"};
-const ROM_LANGS=["ne"]; // scripts shown with optional romanisation
+const ROM_LANGS=["ne","ko"]; // scripts shown with optional romanisation
 const romOf=(it,l)=>ROM_LANGS.includes(l)&&P().rom&&it.rom&&it.rom[l]?it.rom[l]:"";
 const knownText=it=>it[P().known]||it.mean||"";
 const noteOf=it=>{const n=it.kind==="phrase"?it.note:(it.notes&&it.notes[P().target]); return n?(n[P().ui]||n.en):""};

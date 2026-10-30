@@ -244,6 +244,26 @@ for (const g of G) {
   const x = GRAMMAR_UI_ITFR[g.id];
   if (x) for (const l of ["it", "fr"]) { g.title[l] = x[l].title; g.rule[l] = x[l].rule; }
 }
+// Lingua 0.3.0: Korean explanations of the Italian and French grammar topics.
+const ITFR_KO = {
+  g_it_are: ["현재형: -are 동사",
+    "parlare → parl- + -o, -i, -a, -iamo, -ate, -ano. 주어 대명사는 보통 생략해요: Parlo italiano. -iare로 끝나는 동사는 i를 하나만 남겨요: studiare → tu studi."],
+  g_it_essere: ["essere와 avere (이다, 가지다)",
+    "가장 중요한 두 동사는 불규칙이에요. 외워 두세요. loro(그들): sono, hanno – io sono와 loro sono는 모양이 같아요. ho, hai, ha, hanno의 h는 발음하지 않아요. 존댓말 '당신'(Lei)은 3인칭을 써요: Lei è, Lei ha."],
+  g_it_ere: ["-ere 동사와 -ire 동사",
+    "-ere: -o, -i, -e, -iamo, -ete, -ono (prendere → prendo, prendete). -ire: 같지만 voi는 -ite로 끝나요 (dormire → dormite). 많은 -ire 동사는 -isc-를 넣어요: finire → finisco, finisci."],
+  g_it_art: ["il, la, lo (명사의 성)",
+    "남성 명사에는 il을 써요 (il libro). 하지만 s + 자음, z, gn, ps 앞에서는 lo를 써요 (lo studente, lo zaino). 여성 명사에는 la를 써요 (la casa). 모음 앞에서 lo와 la는 l'가 돼요: l'amico, l'acqua."],
+  g_fr_er: ["현재형: -er 동사",
+    "parler → parl- + -e, -es, -e, -ons, -ez, -ent. je와 il/elle은 형태가 같고 (je parle, il parle), 어미 -e, -es, -ent는 발음하지 않아요. 모음 앞에서 je는 j'가 돼요: j'aime."],
+  g_fr_etre: ["être와 avoir (이다, 가지다)",
+    "가장 중요한 두 동사는 불규칙이에요. 외워 두세요. 모음 앞에서 je는 j'가 돼요: je suis, 하지만 j'ai. vous는 존댓말로도 써요: vous êtes, vous avez."],
+  g_fr_pc: ["복합 과거: 과거분사",
+    "복합 과거 = 현재형 avoir(또는 être) + 과거분사: j'ai mangé, elle est venue. -er → -é (parler → parlé), -ir → -i (finir → fini). 자주 쓰는 동사 중 불규칙이 많아요: faire → fait, prendre → pris, voir → vu."],
+  g_fr_art: ["le, la (명사의 성)",
+    "명사는 남성(le) 아니면 여성(la)이에요: le livre, la maison. 모음이나 묵음 h 앞에서는 둘 다 l'가 돼요: l'ami, l'eau, l'hôtel. -tion으로 끝나는 말은 대개 여성, -ment과 -age로 끝나는 말은 대개 남성이에요."],
+};
+for (const g of G) if (ITFR_KO[g.id]) { g.title.ko = ITFR_KO[g.id][0]; g.rule.ko = ITFR_KO[g.id][1]; }
 export const GRAMMAR = G;
 export const GRAMMAR_BY = Object.fromEntries(G.map((g) => [g.id, g]));
 

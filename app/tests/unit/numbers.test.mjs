@@ -20,7 +20,7 @@ for (const [lang, cases] of Object.entries(CASES)) {
 }
 
 test("every curriculum number has words in all six languages", () => {
-  for (const lang of ["en", "de", "es", "it", "fr", "ne"]) for (const n of curriculumNumbers()) assert.ok(numWords(n, lang));
+  for (const lang of ["en", "de", "es", "it", "fr", "ko", "ne"]) for (const n of curriculumNumbers()) assert.ok(numWords(n, lang));
 });
 
 test("digit grouping follows each language", () => {
