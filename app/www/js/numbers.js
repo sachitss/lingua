@@ -1,4 +1,4 @@
-// Numbers in words for German, English, Spanish, Italian, French, Nepali, Korean and Japanese, 0 to 1,000,000.
+// Numbers in words for German, English, Spanish, Italian, French, Nepali, Korean, Japanese and Greek, 0 to 1,000,000.
 // A number is returned as parts [{k, t, r}] – k: audio key, t: text, r: romanisation (Nepali, Korean).
 // Each part has its own recorded clip, so 347 plays "three hundred and" + "forty-seven".
 
@@ -133,6 +133,37 @@ function ja9999(n) {
   return { t: JA1000[th] + JA100[h] + x.t, r: JA1000_R[th] + JA100_R[h] + x.r };
 }
 
+/* ---------- Greek (neuter counting forms; thousands use feminine forms with χιλιάδες) ---------- */
+const EL1 = ["μηδέν", "ένα", "δύο", "τρία", "τέσσερα", "πέντε", "έξι", "επτά", "οκτώ", "εννέα", "δέκα", "έντεκα", "δώδεκα",
+  "δεκατρία", "δεκατέσσερα", "δεκαπέντε", "δεκαέξι", "δεκαεπτά", "δεκαοκτώ", "δεκαεννέα"];
+const EL1_R = ["midén", "éna", "dýo", "tría", "téssera", "pénte", "éxi", "eptá", "októ", "ennéa", "déka", "énteka", "dódeka",
+  "dekatría", "dekatéssera", "dekapénte", "dekaéxi", "dekaeptá", "dekaoktó", "dekaennéa"];
+const EL1F = { 1: ["μία", "mía"], 3: ["τρεις", "treis"], 4: ["τέσσερις", "tésseris"], 13: ["δεκατρείς", "dekatreís"], 14: ["δεκατέσσερις", "dekatésseris"] };
+const EL10 = ["", "", "είκοσι", "τριάντα", "σαράντα", "πενήντα", "εξήντα", "εβδομήντα", "ογδόντα", "ενενήντα"];
+const EL10_R = ["", "", "eíkosi", "triánta", "saránta", "penínta", "exínta", "evdomínta", "ogdónta", "enenínta"];
+const EL100 = ["", "εκατό", "διακόσια", "τριακόσια", "τετρακόσια", "πεντακόσια", "εξακόσια", "επτακόσια", "οκτακόσια", "εννιακόσια"];
+const EL100_R = ["", "ekató", "diakósia", "triakósia", "tetrakósia", "pentakósia", "exakósia", "eptakósia", "oktakósia", "enniakósia"];
+/** 1–99; fem = feminine forms (before χιλιάδες). */
+function el99(n, fem) {
+  if (n < 20) { const f = fem && EL1F[n]; return f ? { t: f[0], r: f[1] } : { t: EL1[n], r: EL1_R[n] }; }
+  const t = Math.floor(n / 10), u = n % 10;
+  if (!u) return { t: EL10[t], r: EL10_R[t] };
+  const x = el99(u, fem);
+  return { t: EL10[t] + " " + x.t, r: EL10_R[t] + " " + x.r };
+}
+/** Hundreds: εκατό alone, εκατόν before more; 200–900 neuter -α or feminine -ες. */
+function elH(h, more, fem) {
+  if (h === 1) return more ? { t: "εκατόν", r: "ekatón" } : { t: "εκατό", r: "ekató" };
+  return fem ? { t: EL100[h].replace(/α$/, "ες"), r: EL100_R[h].replace(/a$/, "es") } : { t: EL100[h], r: EL100_R[h] };
+}
+/** 1–999 as words; fem for thousands. */
+function el999(n, fem) {
+  const h = Math.floor(n / 100), r = n % 100, out = [], rom = [];
+  if (h) { const x = elH(h, r > 0, fem); out.push(x.t); rom.push(x.r); }
+  if (r) { const x = el99(r, fem); out.push(x.t); rom.push(x.r); }
+  return { t: out.join(" "), r: rom.join(" ") };
+}
+
 /* ---------- Parts ---------- */
 const P = (k, t, r) => (r ? { k, t, r } : { k, t });
 /** The words for n (0–1,000,000) as audio parts. */
@@ -209,6 +240,16 @@ export function numParts(n, lang) {
     if (r) { const x = ja99(r); out.push(P("n" + r, x.t, x.r)); }
     return out;
   }
+  if (lang === "el") {
+    if (n === 0) return [P("n0", EL1[0], EL1_R[0])];
+    if (n === 1e6) return [P("n1000000", "ένα εκατομμύριο", "éna ekatommýrio")];
+    const out = [], th = Math.floor(n / 1000), rest = n % 1000, h = Math.floor(rest / 100), r = rest % 100;
+    if (th === 1) out.push(P("n1000", "χίλια", "chília"));
+    else if (th) { const x = el999(th, true); out.push(P("n" + th * 1000, x.t + " χιλιάδες", x.r + " chiliádes")); }
+    if (h) { const x = elH(h, r > 0, false); out.push(P("n" + h * 100 + (h === 1 && r ? "c" : ""), x.t, x.r)); }
+    if (r) { const x = el99(r, false); out.push(P("n" + r, x.t, x.r)); }
+    return out;
+  }
   throw new Error("unknown language " + lang);
 }
 /** Written form: German joins parts without spaces below a million; Korean puts a space after 만. */
@@ -228,7 +269,7 @@ export function numDigits(n, lang) {
   if (lang === "ne") { const s = String(n); if (s.length <= 3) return s; const last = s.slice(-3), head = s.slice(0, -3); return head.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + last; }
   if (n < 10000 && lang === "es") return String(n);
   if (lang === "fr") return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0");
-  const sep = lang === "de" || lang === "es" || lang === "it" ? "." : ",";
+  const sep = lang === "de" || lang === "es" || lang === "it" || lang === "el" ? "." : ",";
   return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
 }
 

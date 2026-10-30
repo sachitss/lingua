@@ -1,6 +1,7 @@
 // Interactive conversations (chatbot-style dialogues) and grammar topics.
 import { DIALOGS_ITFR, GRAMMAR_ITFR, GRAMMAR_UI_ITFR } from "./itfr.js";
 import { DIALOGS_JA, GRAMMAR_JA, GRAMMAR_UI_JA } from "./ja.js";
+import { DIALOGS_EL, GRAMMAR_EL, GRAMMAR_UI_EL } from "./el.js";
 // Dialogue line: [who, de, en, es, ne, neRom, ko, koRom] – "b" = the app's character speaks, "m" = the learner answers.
 
 const L5 = (de, en, es, ne, ko) => ({ de, en, es, ne, ko });
@@ -83,10 +84,11 @@ const RAW_DIALOGS = [
 /** Dialogues as {id, sit, level, title, lines:[{id, who, de, en, es, ne, ko, rom:{ne, ko}}]}; line ids like c1.3 (audio key). */
 export const DIALOGS = RAW_DIALOGS.map((d) => ({
   ...d,
-  title: { ...d.title, it: DIALOGS_ITFR[d.id]?.title.it, fr: DIALOGS_ITFR[d.id]?.title.fr, ja: DIALOGS_JA[d.id]?.title },
+  title: { ...d.title, it: DIALOGS_ITFR[d.id]?.title.it, fr: DIALOGS_ITFR[d.id]?.title.fr, ja: DIALOGS_JA[d.id]?.title, el: DIALOGS_EL[d.id]?.title },
   lines: d.lines.map(([who, de, en, es, ne, neR, ko, koR], i) => ({ id: `${d.id}.${i}`, who, de, en, es, ne, ko,
     it: DIALOGS_ITFR[d.id]?.lines[i]?.it, fr: DIALOGS_ITFR[d.id]?.lines[i]?.fr, ja: DIALOGS_JA[d.id]?.lines[i]?.t,
-    rom: { ne: neR, ko: koR, ja: DIALOGS_JA[d.id]?.lines[i]?.r } })),
+    el: DIALOGS_EL[d.id]?.lines[i]?.t,
+    rom: { ne: neR, ko: koR, ja: DIALOGS_JA[d.id]?.lines[i]?.r, el: DIALOGS_EL[d.id]?.lines[i]?.r } })),
 }));
 export const DIALOG_BY = Object.fromEntries(DIALOGS.map((d) => [d.id, d]));
 
@@ -269,6 +271,9 @@ for (const g of G) if (ITFR_KO[g.id]) { g.title.ko = ITFR_KO[g.id][0]; g.rule.ko
 // Lingua 0.3.0: Japanese grammar topics, and Japanese explanations of all other topics.
 for (const g of GRAMMAR_JA) G.push({ ...g, title: { ...g.title }, rule: { ...g.rule } });
 for (const g of G) if (GRAMMAR_UI_JA[g.id]) { g.title.ja = GRAMMAR_UI_JA[g.id].title; g.rule.ja = GRAMMAR_UI_JA[g.id].rule; }
+// Lingua 0.4.0: Greek grammar topics, and Greek explanations of all other topics.
+for (const g of GRAMMAR_EL) G.push({ ...g, title: { ...g.title }, rule: { ...g.rule } });
+for (const g of G) if (GRAMMAR_UI_EL[g.id]) { g.title.el = GRAMMAR_UI_EL[g.id].title; g.rule.el = GRAMMAR_UI_EL[g.id].rule; }
 export const GRAMMAR = G;
 export const GRAMMAR_BY = Object.fromEntries(G.map((g) => [g.id, g]));
 

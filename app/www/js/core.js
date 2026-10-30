@@ -161,11 +161,12 @@ const LEAD = {
   es: /^(el|la|los|las)\s+/i,
   it: /^(il|lo|la|i|gli|le)\s+|^l['’]/i,
   fr: /^(le|la|les|se)\s+|^l['’]|^s['’](?!il\b)/i,
+  el: /^(ο|η|το|οι|τα)\s+/i,
 };
 const LEAD_ANY = /^(der|die|das|to|sich|el|la|los|las)\s+/i;
 /** The word without its article or infinitive marker (der Tisch → Tisch, l'acqua → acqua, se souvenir → souvenir). */
 export function coreWord(s, lang) {
-  return String(s || "").replace(LEAD[lang] || LEAD_ANY, "").replace(/[¿¡?!.。？！]/g, "").trim();
+  return String(s || "").replace(LEAD[lang] || LEAD_ANY, "").replace(/[¿¡?!.。？！;;]/g, "").trim();
 }
 export function blankable(item, lang) {
   const ex = item.ex && item.ex[lang];
@@ -427,14 +428,15 @@ export const PREFERRED_VOICE = {
   en: { f: /sonia|libby|maisie/, m: /ryan|thomas/ },
   ne: { f: /hemkala/, m: /sagar/ },
   ko: { f: /sunhi/, m: /injoon/ },
-  ja: { f: /nanami|aoi|mayu|shiori|kyoko|haruka|ayumi|sayaka|o-ren/, m: /keita|daichi|naoki|otoya|ichiro|hattori/ },
+  ja: { f: /nanami|aoi|mayu|shiori|kyoko|haruka|ayumi|sayaka|o-ren|athina|melina|zoe/, m: /keita|daichi|naoki|otoya|ichiro|hattori/ },
+  el: { f: /athina|melina|maria|zoe/, m: /nestoras|nikos|stefanos/ },
   es: { f: /elvira|ximena|abril|laura|helena|monica|paulina/, m: /alvaro|jorge|pablo|diego/ },
   it: { f: /elsa|isabella|alice|federica|paola|fiamma/, m: /diego|giuseppe|\bluca\b|cosimo|benigno/ },
   fr: { f: /denise|eloise|vivienne|amelie|audrey|marie|julie|celine|nanami|aoi|mayu|shiori|kyoko|haruka|ayumi|sayaka|o-ren/, m: /\bhenri\b|\bremy\b|thomas|daniel|nicolas|\bpaul\b/ },
 };
 const GENDER_HINT = {
   f: /female|weiblich|katja|seraphina|amala|hedda|anna|petra|helena|vicki|marlene|sonia|libby|maisie|hazel|susan|kate|serena|samantha|karen|moira|tessa|fiona|zira|aria|jenny|hemkala|lekha|swara|sunhi|yuna|jimin|seoyeon|soonbok|yujin|heami|elvira|ximena|abril|laura|helena|monica|paulina|elsa|isabella|alice|federica|paola|fiamma|denise|eloise|vivienne|amelie|audrey|marie|julie|celine/,
-  m: /\bmale|männlich|conrad|killian|florian|stefan|markus|yannick|hans|ryan|thomas|daniel|oliver|george|arthur|alfie|david|mark\b|guy|sagar|rishi|madhur|injoon|hyunsu|bongjin|gookmin|minsu|alvaro|jorge|pablo|diego|giuseppe|\bluca\b|cosimo|benigno|\bhenri\b|\bremy\b|nicolas|\bpaul\b|keita|daichi|naoki|otoya|ichiro|hattori/,
+  m: /\bmale|männlich|conrad|killian|florian|stefan|markus|yannick|hans|ryan|thomas|daniel|oliver|george|arthur|alfie|david|mark\b|guy|sagar|rishi|madhur|injoon|hyunsu|bongjin|gookmin|minsu|alvaro|jorge|pablo|diego|giuseppe|\bluca\b|cosimo|benigno|\bhenri\b|\bremy\b|nicolas|\bpaul\b|keita|daichi|naoki|otoya|ichiro|hattori|nestoras|nikos|stefanos/,
 };
 const NATIVE_LOCALE = { de: "de-de", en: "en-gb", ne: "ne-np", ko: "ko-kr", es: "es-es", it: "it-it", fr: "fr-fr" };
 

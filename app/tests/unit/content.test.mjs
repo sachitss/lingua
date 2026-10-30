@@ -5,7 +5,7 @@ import { ITEMS, WORDS, READ } from "../../www/js/content.js";
 import { DIALOGS, GRAMMAR, grammarQuiz } from "../../www/js/practice.js";
 import { blankable } from "../../www/js/core.js";
 
-const LANGS = ["en", "de", "es", "it", "fr", "ko", "ja", "ne"];
+const LANGS = ["en", "de", "es", "it", "fr", "el", "ko", "ja", "ne"];
 
 test("item ids are unique", () => {
   assert.equal(new Set(ITEMS.map((i) => i.id)).size, ITEMS.length);

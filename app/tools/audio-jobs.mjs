@@ -5,7 +5,7 @@ import { ITEMS, READ } from "../www/js/content.js";
 import { numberAudioParts } from "../www/js/numbers.js";
 import { DIALOGS, grammarAudioJobs } from "../www/js/practice.js";
 
-export const AUDIO_LANGS = ["de", "en", "ne", "ko", "es", "it", "fr", "ja"];
+export const AUDIO_LANGS = ["de", "en", "ne", "ko", "es", "it", "fr", "ja", "el"];
 
 export function jobsFor(lang) {
   const jobs = [];

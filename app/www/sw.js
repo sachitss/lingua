@@ -1,10 +1,10 @@
 // Lingua service worker: app shell precached; audio cached on first play (or all at once via "download audio").
-const VERSION = "0.3.0";
+const VERSION = "0.4.0";
 const SHELL = `lingua-shell-${VERSION}`;
 const AUDIO = "lingua-audio-v1";
 const SHELL_FILES = [
   "./", "index.html", "manifest.webmanifest", "css/app.css",
-  "js/app.js", "js/core.js", "js/content.js", "js/i18n.js", "js/numbers.js", "js/practice.js", "js/itfr.js", "js/ja.js",
+  "js/app.js", "js/core.js", "js/content.js", "js/i18n.js", "js/numbers.js", "js/practice.js", "js/itfr.js", "js/ja.js", "js/el.js",
   "icons/icon-64.png", "icons/icon-192.png", "icons/icon-512.png", "icons/favicon.png", "icons/favicon.svg", "icons/lingua-mark.svg", "icons/team-nepal-solutions.png",
   "audio/index.json",
 ];

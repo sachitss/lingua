@@ -26,14 +26,14 @@ D.profile.prio=normPrio(D.profile.prio);
 for(const tl of Object.keys(D.prog))for(const id of Object.keys(D.prog[tl]))migrateProgress(D.prog[tl][id]);
 if(hadData&&!hadOb)D.profile.onboarded=true;
 // First visit: interface follows the device language when it is one of ours.
-try{if(!localStorage.getItem(KEY)){const nl=(navigator.language||"en").slice(0,2); if(["de","ne","es","it","fr","ko","ja"].includes(nl)){D.profile.ui=nl; D.profile.known=nl; D.profile.target=nl==="de"?"ne":nl==="ne"?"de":"en"}}}catch(e){}
+try{if(!localStorage.getItem(KEY)){const nl=(navigator.language||"en").slice(0,2); if(["de","ne","es","it","fr","ko","ja","el"].includes(nl)){D.profile.ui=nl; D.profile.known=nl; D.profile.target=nl==="de"?"ne":nl==="ne"?"de":"en"}}}catch(e){}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
 const P=()=>D.profile;
 const t=(k,v)=>{let s=(S[P().ui]&&S[P().ui][k])??S.en[k]??k; if(v)for(const x in v)s=s.replace("{"+x+"}",v[x]); return s};
-const LANGS=["en","de","es","it","fr","ko","ja","ne"]; // Lingua: interface, known and learning languages
-const LOCALE={de:"de-DE",en:"en-GB",ne:"ne-NP",ko:"ko-KR",ja:"ja-JP",es:"es-ES",it:"it-IT",fr:"fr-FR"};
-const UI_NAME={de:"Deutsch",en:"English",ne:"नेपाली",ko:"한국어",ja:"日本語",es:"Español",it:"Italiano",fr:"Français"};
-const ROM_LANGS=["ne","ko","ja"]; // scripts shown with optional romanisation
+const LANGS=["en","de","es","it","fr","el","ko","ja","ne"]; // Lingua: interface, known and learning languages
+const LOCALE={de:"de-DE",en:"en-GB",ne:"ne-NP",ko:"ko-KR",ja:"ja-JP",el:"el-GR",es:"es-ES",it:"it-IT",fr:"fr-FR"};
+const UI_NAME={de:"Deutsch",en:"English",ne:"नेपाली",ko:"한국어",ja:"日本語",el:"Ελληνικά",es:"Español",it:"Italiano",fr:"Français"};
+const ROM_LANGS=["ne","ko","ja","el"]; // scripts shown with optional romanisation
 const romOf=(it,l)=>ROM_LANGS.includes(l)&&P().rom&&it.rom&&it.rom[l]?it.rom[l]:"";
 const knownText=it=>it[P().known]||it.mean||"";
 const noteOf=it=>{const n=it.kind==="phrase"?it.note:(it.notes&&it.notes[P().target]); return n?(n[P().ui]||n.en):""};
@@ -741,7 +741,7 @@ function startGame(g){
 function endGame(G){stopGameTimer(); G.over=true; G.newBest=setBest(G.g,G.g==="memory"?G.moves:G.score); addXP(Math.min(30,G.score*2||5),null); render()}
 function speedQ(G){const it=G.pool[Math.floor(Math.random()*G.pool.length)]; const wrong=shuffle(G.pool.filter(x=>x.id!==it.id&&knownText(x)!==knownText(it))).slice(0,3); return {id:it.id,opts:shuffle([it,...wrong]).map(x=>x.id)}}
 const graphemes=s=>{try{return [...new Intl.Segmenter(undefined,{granularity:"grapheme"}).segment(s)].map(x=>x.segment)}catch(e){return [...s]}};
-const spellWord=i=>{const tl=P().target; return ["de","es","it","fr"].includes(tl)?coreWord(i[tl],tl):i[tl].replace(/^to /,"")};
+const spellWord=i=>{const tl=P().target; return ["de","es","it","fr","el"].includes(tl)?coreWord(i[tl],tl):i[tl].replace(/^to /,"")};
 function spellSetup(G){const w=G.words[G.i]; if(!w)return; const gs=graphemes(spellWord(w)); G.letters=gs; G.perm=shuffledOrder(gs.length); G.ans=[]; G.res=null}
 function vGame(){
   const G=ui.game; if(!G)return vLearn(); const tl=P().target;

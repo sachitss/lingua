@@ -1,7 +1,8 @@
 // Learning content: words, travel phrases, phrases of the day and reading texts.
-// Lingua teaches English, German, Spanish, Italian, French, Korean, Japanese and Nepali.
+// Lingua teaches English, German, Spanish, Italian, French, Greek, Korean, Japanese and Nepali.
 import { IT, FR, READ_ITFR } from "./itfr.js";
 import { JA, READ_JA } from "./ja.js";
+import { EL, READ_EL } from "./el.js";
 // Word rows: [id, topic, level(b|i|a), de, en, ne, romanised ne, example de, example en, example ne, note?]
 // Edit here, then run `npm run audio` (or the "Generate audio" workflow) to refresh native audio.
 export const RAW = [
@@ -424,6 +425,13 @@ for (const it of ITEMS) {
   it.ja = v.w; it.rom.ja = v.r;
   if (it.ex && v.ex) it.ex.ja = v.ex;
 }
+// Greek for every item (Lingua 0.4.0): word with article, romanisation and example sentence.
+for (const it of ITEMS) {
+  const v = EL[it.id];
+  if (!v) continue;
+  it.el = v.w; it.rom.el = v.r;
+  if (it.ex && v.ex) it.ex.el = v.ex;
+}
 export const BY = Object.fromEntries(ITEMS.map(i=>[i.id,i]));
 export const WORDS = ITEMS.filter(i=>i.kind==="word");
 export const ALL_TRV = TRV.concat(TRV2);
@@ -507,5 +515,11 @@ for (const r of READ) {
   if (!x) continue;
   r.title.ja = x.title; r.text.ja = x.text;
   r.q.forEach((q, i) => { q.q.ja = x.q[i].q; q.o.forEach((o, j) => { o.ja = x.q[i].o[j]; }); });
+}
+for (const r of READ) {
+  const x = READ_EL[r.id];
+  if (!x) continue;
+  r.title.el = x.title; r.text.el = x.text;
+  r.q.forEach((q, i) => { q.q.el = x.q[i].q; q.o.forEach((o, j) => { o.el = x.q[i].o[j]; }); });
 }
 export const READ_BY = Object.fromEntries(READ.map((r) => [r.id, r]));

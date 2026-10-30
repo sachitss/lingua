@@ -1,11 +1,11 @@
 # Lingua app
 
-Lingua 0.3.0 is built on the Bhasha 1.3.0 code (plain JavaScript ES modules in `www/`, wrapped with Capacitor for Android and iOS).
+Lingua 0.4.0 is built on the Bhasha 1.3.0 code (plain JavaScript ES modules in `www/`, wrapped with Capacitor for Android and iOS).
 
 | Command | What it does |
 | --- | --- |
 | `npm ci` | Install Capacitor and the test tools |
-| `npm test` | Unit tests: content in eight languages, numbers, FSRS scheduling, interface strings |
+| `npm test` | Unit tests: content in nine languages, numbers, FSRS scheduling, interface strings |
 | `npm run e2e` | Browser tests with Playwright (desktop and mobile Chromium) |
 | `npm run serve` | Serve `www/` on http://localhost:8080 |
 | `npx cap sync` | Copy `www/` into the Android and iOS projects |
@@ -36,4 +36,4 @@ Italian and French content (`www/js/itfr.js`) and the Italian and French interfa
 ### Built-in audio
 Native recordings for every word, example, reading text, number part, conversation line and grammar row are generated with Azure Neural TTS (`tools/generate-audio.mjs`, voices listed in `www/audio/CREDITS.md`). Only missing or changed clips are generated (`www/audio/hashes.json`). Run in `app/` with `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` set; ffmpeg is required.
 
-Japanese content (`www/js/ja.js`) was drafted for 0.3.0 and needs review by a native speaker before a store release.
+Japanese (`www/js/ja.js`, 0.3.0) and Greek (`www/js/el.js`, 0.4.0) content was drafted and needs review by a native speaker before a store release.

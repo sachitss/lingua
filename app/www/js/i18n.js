@@ -1,5 +1,6 @@
-// Interface text in English, German, Spanish, Italian, French, Korean, Japanese and Nepali. The interface language is independent of the learning language.
+// Interface text in English, German, Spanish, Italian, French, Greek, Korean, Japanese and Nepali. The interface language is independent of the learning language.
 import { UI_JA } from "./ja.js";
+import { UI_EL } from "./el.js";
 export const S = {
 en:{poweredBy:"Powered by",installApp:"Install app",download:"Download my data (JSON)",nativeAudio:"Built-in voice: {name}",deviceVoice:"device speech engine",offlineReady:"Ready to use offline",neTip:"For a native Nepali voice on Windows, open this page in Microsoft Edge: it includes Hemkala (female) and Sagar (male), which Bhasha selects automatically.",voiceGender:"Voice",g_f:"Female",g_m:"Male",voices:"Voices",voiceFor:"{lang} voice",autoVoice:"Best native voice (automatic)",testVoice:"Test",deTip:"For a natural native German voice: on Windows, open this page in Microsoft Edge and pick Katja or Conrad (Natural). On iPhone or Mac, download Anna (Enhanced) under Settings → Accessibility → Spoken Content → Voices → German. On Android, add German in Google speech services. Voices marked ★ are the high-quality ones.",tag:"German · English · Nepali · Korean",home:"Home",learn:"Learn",words:"Words",speak:"Speak",travel:"Travel",progress:"Progress",profile:"Profile",
  plan:"Today's plan",min:"min",start:"Start today's session",resume:"Resume session",due:"to review",newW:"new words",pronT:"pronunciation",listenT:"listening",
@@ -382,4 +383,29 @@ for (const ui of ["en", "de", "es", "it", "fr", "ne", "ko", "ja"]) {
   if (ui !== "ja") S[ui].numTip_ja = NUM_TIP_JA[ui];
   S[ui].showRom = SHOW_ROM_JA[ui];
   S[ui].tag = ["en", "de", "es", "it", "fr", "ko", "ja", "ne"].map((l) => S[ui]["lang_" + l]).join(" · ");
+}
+
+/* ---------- Lingua 0.4.0: Greek as a learning and interface language ---------- */
+S.el = Object.assign({}, S.en, UI_EL);
+const EL_NAME = { en: "Greek", de: "Griechisch", es: "Griego", it: "Greco", fr: "Grec", ne: "ग्रीक", ko: "그리스어", ja: "ギリシャ語", el: "Ελληνικά" };
+const NUM_TIP_EL = {
+  en: "1, 3 and 4 change with gender: ένα/μία, τρία/τρεις, τέσσερα/τέσσερις. Counting uses the neuter forms; before χιλιάδες (thousands) the feminine ones: τρεις χιλιάδες. 100 is εκατό, but εκατόν before more numbers (εκατόν ένα). 1,000 is χίλια, 2,000 is δύο χιλιάδες, a million ένα εκατομμύριο.",
+  de: "1, 3 und 4 richten sich nach dem Geschlecht: ένα/μία, τρία/τρεις, τέσσερα/τέσσερις. Beim Zählen stehen die sächlichen Formen, vor χιλιάδες (Tausender) die weiblichen: τρεις χιλιάδες. 100 ist εκατό, vor weiteren Zahlen εκατόν (εκατόν ένα). 1.000 ist χίλια, 2.000 δύο χιλιάδες, eine Million ένα εκατομμύριο.",
+  es: "El 1, el 3 y el 4 cambian según el género: ένα/μία, τρία/τρεις, τέσσερα/τέσσερις. Para contar se usan las formas neutras; ante χιλιάδες (miles), las femeninas: τρεις χιλιάδες. 100 es εκατό, pero εκατόν ante más cifras (εκατόν ένα). 1000 es χίλια, 2000 δύο χιλιάδες y un millón ένα εκατομμύριο.",
+  it: "1, 3 e 4 cambiano secondo il genere: ένα/μία, τρία/τρεις, τέσσερα/τέσσερις. Per contare si usano le forme neutre; davanti a χιλιάδες (migliaia) quelle femminili: τρεις χιλιάδες. 100 è εκατό, ma εκατόν davanti ad altri numeri (εκατόν ένα). 1.000 è χίλια, 2.000 δύο χιλιάδες, un milione ένα εκατομμύριο.",
+  fr: "1, 3 et 4 varient selon le genre : ένα/μία, τρία/τρεις, τέσσερα/τέσσερις. Pour compter, on emploie les formes neutres ; devant χιλιάδες (milliers), les formes féminines : τρεις χιλιάδες. 100 se dit εκατό, mais εκατόν devant d'autres nombres (εκατόν ένα). 1 000 se dit χίλια, 2 000 δύο χιλιάδες, un million ένα εκατομμύριο.",
+  ne: "१, ३ र ४ लिङ्गअनुसार बदलिन्छन्: ένα/μία, τρία/τρεις, τέσσερα/τέσσερις। गन्दा नपुंसकलिङ्गी रूप प्रयोग हुन्छ; χιλιάδες (हजार) अगाडि स्त्रीलिङ्गी रूप: τρεις χιλιάδες। १०० εκατό हो, तर अरू अङ्क अगाडि εκατόν (εκατόν ένα)। १,००० χίλια, २,००० δύο χιλιάδες, दस लाख ένα εκατομμύριο।",
+  ko: "1, 3, 4는 성에 따라 바뀌어요: ένα/μία, τρία/τρεις, τέσσερα/τέσσερις. 셀 때는 중성형을, χιλιάδες(천 단위) 앞에서는 여성형을 써요: τρεις χιλιάδες. 100은 εκατό이지만 뒤에 수가 더 오면 εκατόν이에요(εκατόν ένα). 1,000은 χίλια, 2,000은 δύο χιλιάδες, 백만은 ένα εκατομμύριο예요.",
+  ja: "1・3・4は性によって形が変わります：ένα/μία、τρία/τρεις、τέσσερα/τέσσερις。数えるときは中性形、χιλιάδες（千の位）の前では女性形を使います：τρεις χιλιάδες。100はεκατόですが、後に数が続くとεκατόνになります（εκατόν ένα）。1,000はχίλια、2,000はδύο χιλιάδες、100万はένα εκατομμύριοです。",
+};
+const SHOW_ROM_EL = { en: "Show romanisation (Nepali, Korean, Japanese, Greek)", de: "Umschrift zeigen (Nepali, Koreanisch, Japanisch, Griechisch)",
+  es: "Mostrar transcripción (nepalí, coreano, japonés, griego)", it: "Mostra la traslitterazione (nepalese, coreano, giapponese, greco)",
+  fr: "Afficher la translittération (népalais, coréen, japonais, grec)", ne: "रोमन लिपि देखाउनुहोस् (नेपाली, कोरियाली, जापानी, ग्रीक)",
+  ko: "로마자 표기 보기 (네팔어, 한국어, 일본어, 그리스어)", ja: "ローマ字表記を表示（ネパール語、韓国語、日本語、ギリシャ語）",
+  el: "Εμφάνιση λατινικής μεταγραφής (νεπαλικά, κορεατικά, ιαπωνικά, ελληνικά)" };
+for (const ui of ["en", "de", "es", "it", "fr", "ne", "ko", "ja", "el"]) {
+  S[ui].lang_el = EL_NAME[ui];
+  if (ui !== "el") S[ui].numTip_el = NUM_TIP_EL[ui];
+  S[ui].showRom = SHOW_ROM_EL[ui];
+  S[ui].tag = ["en", "de", "es", "it", "fr", "el", "ko", "ja", "ne"].map((l) => S[ui]["lang_" + l]).join(" · ");
 }
