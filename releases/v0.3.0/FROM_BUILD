@@ -1,0 +1,10 @@
+# Files copied from the CI pre-release build-0.3.0 when this release is published.
+lingua-0.3.0-android-signed.apk
+lingua-0.3.0-android-signed.aab
+lingua-0.3.0-ios-simulator.zip
+lingua-0.3.0-web.zip
+lingua-0.3.0-windows-setup.exe
+lingua-0.3.0-mac-arm64.dmg
+lingua-0.3.0-mac-x64.dmg
+lingua-0.3.0-install-package.zip
+SHA256SUMS.txt
