@@ -306,7 +306,9 @@ export function answerOk(input, item, lang) {
   if (!v) return false;
   if (v === looseText(coreWord(item[lang] || "", lang)) || v === looseText(item[lang])) return true;
   const rom = item.rom && item.rom[lang];
-  return !!rom && v === looseText(rom);
+  if (!rom) return false;
+  // Greek romanisation: the article (o, i, to, oi, ta) is optional too.
+  return v === looseText(rom) || (lang === "el" && v === looseText(rom.replace(/^(o|i|to|oi|ta)\s+/i, "")));
 }
 /** Writing check (a hint, not a verdict): does the learner's sentence contain the word or its stem? */
 export function usesWord(sentence, item, lang) {

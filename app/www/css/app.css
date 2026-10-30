@@ -29,9 +29,9 @@
   --brand:#14213D; --brand-ink:#F7F6F2; --accent:#F5B21B; --accent-ink:#14213D; --accent-soft:#FCEFCC;
   --good:#1E7A4C; --warn:#A85A06; --bad:#B42318;
   --l-en:#3D6BFF; --l-de:#F5B21B; --l-es:#F0533F; --l-it:#22B07D; --l-fr:#A07BFF; --l-ne:#14213D;
-  --f-display:"Bricolage Grotesque","Mukta","Noto Sans Devanagari","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",system-ui,sans-serif;
-  --f-body:"Bricolage Grotesque","Mukta","Noto Sans Devanagari","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"DM Mono","Mukta",ui-monospace,monospace;
+  --f-display:"Bricolage Grotesque","Segoe UI","Helvetica Neue",Roboto,Arial,"Noto Sans","Mukta","Noto Sans Devanagari","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",system-ui,sans-serif;
+  --f-body:"Bricolage Grotesque","Segoe UI","Helvetica Neue",Roboto,Arial,"Noto Sans","Mukta","Noto Sans Devanagari","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"DM Mono","Segoe UI","Helvetica Neue",Roboto,Arial,"Noto Sans","Mukta",ui-monospace,monospace;
   --r:14px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -270,4 +270,6 @@ a.btn{text-decoration:none;color:inherit}
 /* Japanese and Korean share Han characters: the font variables switch to the matching CJK fonts by language. */
 [lang="ja"]{--f-body:"Bricolage Grotesque","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Meiryo","Noto Sans JP","Noto Sans CJK JP",system-ui,sans-serif;--f-display:"Bricolage Grotesque","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Meiryo","Noto Sans JP","Noto Sans CJK JP",system-ui,sans-serif;--f-mono:"DM Mono","Hiragino Sans","Yu Gothic UI","Meiryo","Noto Sans JP",ui-monospace,monospace}
 [lang="ko"]{--f-body:"Bricolage Grotesque","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",system-ui,sans-serif;--f-display:"Bricolage Grotesque","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",system-ui,sans-serif;--f-mono:"DM Mono","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",ui-monospace,monospace}
-:where([lang="ja"],[lang="ko"]){font-family:var(--f-body)}
+/* Greek: Bricolage Grotesque has no Greek letters, so Greek text uses the system fonts (SF, Roboto, Segoe UI, Noto). */
+[lang="el"]{--f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,sans-serif;--f-display:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,sans-serif;--f-mono:"DM Mono",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,sans-serif}
+:where([lang="ja"],[lang="ko"],[lang="el"]){font-family:var(--f-body)}
